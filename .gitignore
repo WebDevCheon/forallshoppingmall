@@ -1,5 +1,8 @@
 ### Eclipse ###
 .metadata
+trash/
+goodsimgUpload/
+reviewUpload/
 bin/
 tmp/
 *.tmp
@@ -10,9 +13,6 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-trash/
-goodsimgUpload/
-reviewUpload/
 
 # External tool builders
 .externalToolBuilders/
