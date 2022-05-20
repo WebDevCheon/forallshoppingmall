@@ -253,8 +253,8 @@ public class MallController {
 		return "/order/orderresult";
 	}
 
-	@RequestMapping(value = "/iamport-webhook", method = RequestMethod.POST) // 고객이 무통장 입금으로 돈을 넣은 경우만 실행
-	public void webhook(@RequestParam(required = false) String imp_uid,
+	@RequestMapping(value = "/iamport-webhook", method = RequestMethod.POST) // 고객이 무통장 입금으로 결제를 하거나,가상 계좌에 금액을 넣었을때 발생
+	public void webhook(@RequestParam(required = false) String imp_uid,		 // 다른 결제 수단은 웹훅 사용 안함
 			@RequestParam(required = false) String merchant_uid, HttpServletRequest request,
 			HttpServletResponse response, @RequestParam(required = false) String status, Model model) {
 		if (status != null && !status.equals("paid")) // 가상계좌에 입금했거나 결제 완료
@@ -313,8 +313,7 @@ public class MallController {
 						String amount = String.valueOf(getdata.get("amount"));
 						String mystatus = String.valueOf(getdata.get("status"));
 						if (String.valueOf(getdata.get("vbank_num")) == null) // 무통장 입금이 아니면 webhook을 종료시킨다. -> 무통장 입금만
-																				// 웹훅을 사용할 것이기 때문이다.
-							return;
+							return;											  // 웹훅을 사용할 것이기 때문이다.
 						String vbankholder = String.valueOf(getdata.get("vbank_holder"));
 						String vbanknum = String.valueOf(getdata.get("vbank_num"));
 						String vbankcode = String.valueOf(getdata.get("vbank_code"));
@@ -348,7 +347,7 @@ public class MallController {
 		}
 	}
 
-	@RequestMapping("/mobile")
+	@RequestMapping("/mobile")	// IMPORT 서버에서 카드사 서버로 결제가 완료된 이후에 쇼핑몰 서버에 결제 정보를 돌려주고 Redirect 될 URL(Mobile기기로 결제했을때만)
 	public String mobile(@RequestParam String coupon, @RequestParam String imp_uid, @RequestParam String merchant_uid,
 			HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam String[] booknamelist,
 			@RequestParam Integer[] bookqtylist, @RequestParam String amount, HttpSession session) {

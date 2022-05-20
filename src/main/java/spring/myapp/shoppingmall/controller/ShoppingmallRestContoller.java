@@ -139,7 +139,7 @@ public class ShoppingmallRestContoller {
 		return new ResponseEntity<Integer>((Integer)(productserviceimpl.remaincheck(newname,newqty)),HttpStatus.OK);
 	}
 
-	@PostMapping("/completeToken")  //MySQL DB에 주문 정보 동기화 과정
+	@PostMapping("/completeToken")  // 결제 이후에 IMPORT서버로부터 온 결제 정보를 쇼핑몰 서버의 MySQL DB에 주문 정보를 동기화 과정
 	public ResponseEntity<JSONObject> completeToken(@RequestBody HashMap<String,Object> map,HttpSession session) throws Exception{
 		logger.info("클라이언트에서 넘어온 정보 로깅 : {}",map);
 		JSONObject json = new JSONObject();
