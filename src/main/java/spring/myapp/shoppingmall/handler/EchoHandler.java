@@ -19,8 +19,6 @@ public class EchoHandler extends TextWebSocketHandler {
 	private static final Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 	private Map<String,Object> userSessions = new HashMap<>();
 	private Map<String,Integer> couponAlarmChecklist = new HashMap<>();
-	@Autowired
-	private MallDao Malldao;
 	
 	@Autowired
 	private CouponServiceImpl couponserviceimpl;

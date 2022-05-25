@@ -641,18 +641,13 @@
 		 headers: {"Content-Type": "application/json","X-CSRF-Token":csrf},
 		 method : "POST",
 		 success : function(data) {
-			if(data.errorMsg != ""){
-				alert(data.errorMsg);
-			}
 			document.getElementById("sname").value = data.name;
 			document.getElementById("saddr").value = data.address;
 			document.getElementById("sphone").value = data.phone;
 			document.getElementById("semail").value = data.email;
 		 },
-		 error : function(err){
+		 error : function(err) {
 			 console.log(err);
-			 alert(err.responseJSON.errorMsg);
-			 alert("에러 발생");
 		}
 	 })
  }

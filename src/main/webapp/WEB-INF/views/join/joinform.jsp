@@ -41,7 +41,7 @@
   <div class="form-group">
     <label for="inputPassword3" class="col-sm-2 control-label">주소</label>
     <div class="col-sm-10">
-      <form:input type="text" class="form-control" id = "saddr" path = "address" placeholder="Address" readonly="true" />
+      <form:input type="text" class="form-control" id = "saddr" path = "address" placeholder="Address" readonly="true" value = "주소"/>
       <form:errors class="error" path="address"/>
       <br>
       <a href = "#" class = "btn amado-btn" onclick = "goPopup()">도로명 주소</a><br>
@@ -96,9 +96,9 @@
       <button type="submit" class="btn amado-btn">회원가입</button>
     </div>
   </div>
+  	<input type="hidden" name="${_csrf.parameterName}" id = "csrftoken" value="${_csrf.token}"/>
    	</form:form> 		
  </div>
- <input type="hidden" name="${_csrf.parameterName}" id = "csrftoken" value="${_csrf.token}"/>
  <script>
 function goPopup(){
 		// 호출된 페이지(jusopopup.jsp)에서 실제 주소검색URL(http://www.juso.go.kr/addrlink/addrLinkUrl.do)를 호출하게 됩니다.

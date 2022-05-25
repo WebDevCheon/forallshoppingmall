@@ -25,7 +25,7 @@
 		<security:intercept-url pattern="/login" access= "permitAll"/>
 		<security:intercept-url pattern="/joinform" access="permitAll"/>
 		<security:intercept-url pattern="/join" access="permitAll"/>
-		<security:intercept-url pattern="/home" access="permitAll"/>
+		<security:intercept-url pattern="/" access="permitAll"/>
 		<security:intercept-url pattern="/shop" access="permitAll"/>
 		<security:intercept-url pattern="/product" access="isAuthenticated()" />
 		<security:intercept-url pattern="/showorder" access="isAuthenticated()" />
@@ -56,6 +56,6 @@
 	
 		<bean id = "loginSuccessHandler" class = "spring.myapp.shoppingmall.security.LoginSuccessHandler">
 			<property name = "loginidname" value = "id"/>
-			<property name = "defaultUrl" value = "/home"/>
+			<property name = "defaultUrl" value = "/"/>
 		</bean> 
 </beans>

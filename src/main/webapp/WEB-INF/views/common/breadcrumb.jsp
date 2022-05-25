@@ -7,7 +7,7 @@
 					<nav role="navigation"  class="range-breadcrumb__nav">
 						<ol class="range-breadcrumb__list">				
 							<li class="range-breadcrumb__list-item">
-							<a href="${pageContext.request.contextPath}/home" class="range-breadcrumb__link link link--black" >
+							<a href="${pageContext.request.contextPath}/" class="range-breadcrumb__link link link--black" >
 							   <span class="range-breadcrumb-span"><i class="nav-icon fa fa-home"></i></span>						
 							</a>
 							<strong class="range-breadcrumb-strong">></strong>

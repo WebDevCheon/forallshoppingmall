@@ -44,6 +44,28 @@
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>
+			org.springframework.web.filter.CharacterEncodingFilter
+		</filter-class>
+
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -56,35 +78,21 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-  <filter>
-   <filter-name>encodingFilter</filter-name>
-   <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-   <init-param>
-    <param-name>encoding</param-name>
-    <param-value>UTF-8</param-value>
-   </init-param>   
-  </filter>
- 
-  <filter-mapping>
-   <filter-name>encodingFilter</filter-name>
-   <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
 	<servlet>
-        <servlet-name>jsp</servlet-name>
-        <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
-        <init-param>
-            <param-name>mappedfile</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </servlet>
-  
-  <error-page>
-	<error-code>404</error-code>
-	<location>/WEB-INF/views/error/404code.jsp</location>
-  </error-page>
-  <error-page>
-	<error-code>500</error-code>
-	<location>/WEB-INF/views/error/500code.jsp</location>
-  </error-page>
+		<servlet-name>jsp</servlet-name>
+		<servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
+		<init-param>
+			<param-name>mappedfile</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</servlet>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/views/error/404code.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/views/error/500code.jsp</location>
+	</error-page>
 </web-app>

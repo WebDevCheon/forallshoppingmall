@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>아이디 조회 결과</title>
 <script src="${pageContext.request.contextPath}/resources/js/jquery/jquery-2.2.4.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/popper.min.js"></script>
@@ -28,7 +28,7 @@
 			<br>
 			<span style = "color:black;font-weight:bold;font-size:30px;">${findUser.id}</span>
 			<br>
-		  	<a href = "${pageContext.request.contextPath}/home" class = "btn btn-primary">홈페이지 돌아가기</a>
+		  	<a href = "${pageContext.request.contextPath}/" class = "btn btn-primary">홈페이지 돌아가기</a>
 		  </div>
 		</div>
 	</c:if>
@@ -37,7 +37,7 @@
 	  <div class = "container">
 	    <div class="jumbotron" style="padding-top: 20px;width:700px;">
 			<h1>이름 또는 핸드폰 번호를 다시 확인하여 주십시오.</h1>
-			<a href = "${pageContext.request.contextPath}/home" class = "btn btn-primary">홈페이지 돌아가기</a>
+			<a href = "${pageContext.request.contextPath}/" class = "btn btn-primary">홈페이지 돌아가기</a>
 	  	</div>
 	  </div>
 	</c:if>

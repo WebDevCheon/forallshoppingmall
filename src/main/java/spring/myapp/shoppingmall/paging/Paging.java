@@ -59,19 +59,19 @@ public class Paging
 	public void pagingforBook(int curPageNum, Model model, String bigclass, String subclass) {
 		int blockNum = 0;
         blockNum = (int)Math.floor((curPageNum-1)/ pageCount);
-        int blockStartNum = (pageCount * blockNum) + 1;					//블록의 시작 숫자
+        int blockStartNum = (pageCount * blockNum) + 1;					// 블록의 시작 숫자
         int blockLastNum = blockStartNum + (pageCount-1);	
         int total = Malldao.getCountWithBook(bigclass, subclass);
         int lastPageNum = 0;
-    	if(total % shopPage == 0) {
+    	if(total % shopPage == 0)
             lastPageNum = (int)Math.floor(total/shopPage);			//마지막 페이지의 수1
-         }
-         else {
+         else
             lastPageNum = (int)Math.floor(total/shopPage) + 1;		//마지막 페이지의 수2
-         }
-		model.addAttribute("curPageNum",curPageNum).addAttribute("blockStartNum",blockStartNum).addAttribute("blockLastNum",blockLastNum).addAttribute("lastPageNum",lastPageNum);
+		model.addAttribute("curPageNum",curPageNum).addAttribute("blockStartNum",blockStartNum).
+			addAttribute("blockLastNum",blockLastNum).addAttribute("lastPageNum",lastPageNum);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	public List<Coupon> coupons(int curPageNum, String id) {
 		List<Coupon> list = null;									
     	list = Malldao.getCurPageCoupons(curPageNum,id);					//현재 페이지에 해당하는 물품 리스트들
@@ -148,12 +148,10 @@ public class Paging
         int blockLastNum = blockStartNum + (pageCount-1);	
         int total = Malldao.getCountOrder(id);
         int lastPageNum = 0;
-    	if(total % shopPage == 0) {
+    	if(total % shopPage == 0)
             lastPageNum = (int)Math.floor(total/shopPage);			//마지막 페이지의 수1
-         }
-         else {
+         else
             lastPageNum = (int)Math.floor(total/shopPage) + 1;		//마지막 페이지의 수2
-         }
 		model.addAttribute("curPageNum",curPageNum).addAttribute("blockStartNum",blockStartNum).addAttribute("blockLastNum",blockLastNum).addAttribute("lastPageNum",lastPageNum);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

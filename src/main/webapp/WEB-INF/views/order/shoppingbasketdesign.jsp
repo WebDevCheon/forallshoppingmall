@@ -93,7 +93,7 @@
         <div class="mobile-nav">
             <!-- Navbar Brand -->
             <div class="amado-navbar-brand">
-                <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
+                <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
             </div>
             <!-- Navbar Toggler -->
             <div class="amado-navbar-toggler">
@@ -109,7 +109,7 @@
             </div>
             <!-- Logo -->
             <div class="logo">
-                <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
+                <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
 		    	<br>
 		    	<c:if test = "${not empty sessionScope.Userid}">
 		    	<div class = "jumbotron" align = "center" style = "width : 160px;margin-top:25px;">
@@ -126,7 +126,7 @@
             <!-- Amado Nav -->
             <nav class="amado-nav">
                 <ul>
-                    <li><a href="${pageContext.request.contextPath}/home">홈페이지</a></li>
+                    <li><a href="${pageContext.request.contextPath}/">홈페이지</a></li>
                     <li><a href="${pageContext.request.contextPath}/shopentrance">상품</a></li>
                     <li class="active"><a href="${pageContext.request.contextPath}/showbasket">장바구니</a></li>
                     <li><a href="${pageContext.request.contextPath}/showcoupon">쿠폰 내역</a></li>
@@ -363,7 +363,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                                 <div class="collapse navbar-collapse" id="footerNavContent">
                                     <ul class="navbar-nav ml-auto">
                                        <li class="nav-item active">
-                                            <a class="nav-link" href="${pageContext.request.contextPath}/home">홈페이지</a>
+                                            <a class="nav-link" href="${pageContext.request.contextPath}/">홈페이지</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="${pageContext.request.contextPath}/shopentrance">상품</a>

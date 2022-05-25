@@ -36,7 +36,7 @@
                     <div class="single_widget_area">
                         <!-- Logo -->
                         <div class="footer-logo mr-50">
-                            <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
+                            <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
                         </div>
                         <!-- Copywrite Text -->
                         <p class="copywrite"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
@@ -54,7 +54,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                                 <div class="collapse navbar-collapse" id="footerNavContent">
                                     <ul class="navbar-nav ml-auto">
                                         <li class="nav-item active">
-                                            <a class="nav-link" href="${pageContext.request.contextPath}/home">홈페이지</a>
+                                            <a class="nav-link" href="${pageContext.request.contextPath}/">홈페이지</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="${pageContext.request.contextPath}/shopentrance">상품</a>

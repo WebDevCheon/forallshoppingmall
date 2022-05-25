@@ -23,11 +23,10 @@
     	return;
     }
     
-    function cart(bookid,bookprice,bookname,qty,userid,thumbnail,remain){  //qty는 주문량
+    function cart(bookid,bookprice,bookname,qty,userid,thumbnail,remain){  // qty는 주문량, cart는 주문하기 버튼 클릭
     		var hqty = document.getElementById('hqty');
     		hqty.value = document.getElementById('qty').value;
 
-    		//if(document.getElementById('qty').value > hqty.value){
     		if(hqty.value > remain){
     			alert("재고의 개수보다 더 많이 담으셨습니다.");
     			return;
@@ -61,13 +60,13 @@
     					alert('장바구니의 최대 갯수는 10개입니다.');
     				}
     			},
-    			error : function(){
+    			error : function() {
     			
     			}
     		});
     	}
     	
-    	function shoppingbasket(userid,remain,bookid,bookprice,bookname,qty,thumbnail) {
+    	function shoppingbasket(userid,remain,bookid,bookprice,bookname,qty,thumbnail) {	// 장바구니 버튼 클릭
     		if($("#qty").val() > remain){
     			alert("재고의 개수보다 더 많이 담으셨습니다.");
     			return;

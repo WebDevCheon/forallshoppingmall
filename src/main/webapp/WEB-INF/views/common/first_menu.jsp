@@ -27,7 +27,7 @@
             </div>
             <!-- Logo -->
             <div class="logo">
-                <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
+                <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
                 <br>
                 <br>
                 <c:if test = "${empty sessionScope.Userid}">
@@ -55,7 +55,7 @@
             <!-- Amado Nav -->
             <nav class="amado-nav">
                 <ul>
-                    <li><a href="${pageContext.request.contextPath}/home">홈페이지</a></li>
+                    <li><a href="${pageContext.request.contextPath}/">홈페이지</a></li>
 					<% if(nowpagename.equals("product")){ %>
                     	<li class="${fn:contains(URL, '/shop') ? 'active':''} active" ><a href="${pageContext.request.contextPath}/shopentrance">상품</a></li>
                     <% } else { %>

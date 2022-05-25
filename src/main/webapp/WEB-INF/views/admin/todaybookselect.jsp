@@ -28,7 +28,7 @@
         <div class="mobile-nav">
             <!-- Navbar Brand -->
             <div class="amado-navbar-brand">
-                <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
+                <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
             </div>
             <!-- Navbar Toggler -->
             <div class="amado-navbar-toggler">

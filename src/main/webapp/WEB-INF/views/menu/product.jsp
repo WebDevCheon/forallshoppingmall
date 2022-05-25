@@ -53,7 +53,7 @@ div[contenteditable=true] {
     <div class="main-content-wrapper d-flex clearfix">
 		<div class="mobile-nav">
             <div class="amado-navbar-brand">
-                <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
+                <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
             </div>
             <div class="amado-navbar-toggler">
                 <span></span><span></span><span></span>
@@ -66,7 +66,7 @@ div[contenteditable=true] {
             </div>
 
             <div class="logo">
-                <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a><br>
+                <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a><br>
                 <br>
                 <c:if test = "${empty sessionScope.Userid}">
               		<a href = "${pageContext.request.contextPath}/loginForm" class = "btn amado-btn">로그인</a><br><br>
@@ -94,7 +94,7 @@ div[contenteditable=true] {
             <!-- Amado Nav -->
             <nav class="amado-nav">
                 <ul>
-                    <li><a href="${pageContext.request.contextPath}/home">홈페이지</a></li>
+                    <li><a href="${pageContext.request.contextPath}/">홈페이지</a></li>
                     <li class = "active"><a href="${pageContext.request.contextPath}/shop">상품</a></li>
                    	<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/showbasket">장바구니</a></li>
                    	<li><a href="${pageContext.request.contextPath}/showcoupon">쿠폰 내역</a></li>
@@ -145,7 +145,7 @@ div[contenteditable=true] {
                     <div class="col-12 product-breadcrumb">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mt-50">
-                                <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/home"><i class="nav-icon fa fa-home"></i></a></li>                                 
+                                <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/"><i class="nav-icon fa fa-home"></i></a></li>                                 
                                 <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/shop?bigclass=${good.bigclass}&subclass=${good.subclass}">${good.kind}</a></li>
                                 <li class="breadcrumb-item"><a href="#">${good.name}</a></li>
                             </ol>
@@ -513,7 +513,7 @@ div[contenteditable=true] {
                     <div class="single_widget_area">
                         <!-- Logo -->
                         <div class="footer-logo mr-50">
-                            <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
+                            <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/resources/img/core-img/bookstore.png" alt=""></a>
                         </div>
                         <!-- Copywrite Text -->
                         <p class="copywrite"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
@@ -531,7 +531,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                                 <div class="collapse navbar-collapse" id="footerNavContent">
                                     <ul class="navbar-nav ml-auto">
                                         <li class="nav-item active">
-                                            <a class="nav-link" href="${pageContext.request.contextPath}/home">홈페이지</a>
+                                            <a class="nav-link" href="${pageContext.request.contextPath}/">홈페이지</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="${pageContext.request.contextPath}/shopentrance">상품</a>

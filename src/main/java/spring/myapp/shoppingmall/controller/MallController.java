@@ -74,25 +74,20 @@ public class MallController {
 	@Autowired
 	private Paging paging;
 
-	@RequestMapping("/")
-	public String defaulthome() {
-		return "home";
-	}
-
-	@RequestMapping("/home") // 홈페이지
+	@RequestMapping("/") // 홈페이지
 	public String home(HttpSession session, Model model, HttpServletResponse response,
 			@CookieValue(value = "JSESSIONID", required = false) String JSESSIONID) {
 		return "home";
 	}
 
-	@RequestMapping("/shopentrance")
+	@RequestMapping("/shopentrance")			// 책 상세 보기 전에 있는 전체적인 책들의 소개 페이지
 	public String shopdefault(Model model) {
 		model.addAttribute("monthlist", productserviceimpl.getmonthbooklist()); // 이달의 인기 서적
-		model.addAttribute("todaybook", productserviceimpl.gettodaybook()); // 오늘의 인기 서적
+		model.addAttribute("todaybook", productserviceimpl.gettodaybook()); 	// 오늘의 인기 서적
 		return "/menu/shopentrance";
 	}
 
-	@RequestMapping("/shop") // 물품 카테고리 + 물품 리스트
+	@RequestMapping("/shop") 					// 책 카테고리 리스트
 	public String shop(@RequestParam(value = "bigclass", required = false) String bigclass,
 			@RequestParam(value = "subclass", required = false) String subclass, Model model,
 			HttpServletRequest request) {
@@ -103,25 +98,25 @@ public class MallController {
 			logger.info("대분류 : {}, 소분류: {}", bigclass, subclass);
 		}
 		if (bigclass == null || subclass == null) {
-			bigclass = "novel"; // 책의 대분류
+			bigclass = "novel"; 	 // 책의 대분류
 			subclass = "japannovel"; // 책의 소분류
 		}
 		pagingModelWithBook(model, request, bigclass, subclass); // 책 상품들의 페이징처리
 		model.addAttribute("bigclass", bigclass);
 		model.addAttribute("subclass", subclass);
-		return "/menu/shop"; // 상품 목록 view
+		return "/menu/shop"; 		// 책 목록 view
 	}
 
-	@RequestMapping("/product") // 물품 상세보기
+	@RequestMapping("/product") 	// 책 상세보기
 	public String product(@RequestParam(value = "bookname", required = false) String bookname, // gId는 책의 이름
 			@RequestParam(value = "goods_id", required = false) String goods_id,
 			@RequestParam(value = "mode", required = false) String mode, Model model, HttpSession session,
 			HttpServletRequest request) {
 		logger.info("product mode : {}", mode);
 		logger.info("bookname : {}", bookname);
-		logger.info("상품 상세 보기 창에서 리뷰 댓글 페이지를 넘기는 경우");
+		logger.info("책 상세 보기 창에서 리뷰 댓글 페이지를 넘기는 경우");
 		logger.info("리뷰 댓글 페이지 넘기기 - bookname : {}", bookname);
-		logger.info("책 넘버 : {}", goods_id);
+		logger.info("책의 아이디 : {}", goods_id);
 		model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
 		model.addAttribute("mode", mode);
 		logger.info("getreviewlatest : {}", mode);
@@ -136,13 +131,13 @@ public class MallController {
 		return "/menu/product";
 	}
 
-	@RequestMapping("/review/{reviewmode}")
+	@RequestMapping("/review/{reviewmode}")		// 사용자가 책의 리뷰를 최신순 또는 도움순으로 보려고 할때 선택해서 페이지를 반환해주는 ReqestMapping
 	public String getreviewhelp(@PathVariable String reviewmode,
-			@RequestParam(value = "bookname", required = false) String bookname, // gId는 책의 이름
+			@RequestParam(value = "bookname", required = false) String bookname,
 			@RequestParam(value = "goods_id", required = false) String goods_id, Model model,
 			HttpServletRequest request) {
 		logger.info("bookname : {}", bookname);
-		logger.info("책 넘버 : {}", goods_id);
+		logger.info("책 아이디 : {}", goods_id);
 		logger.info("reviewmode : " + reviewmode);
 		if (reviewmode.equals("getreviewhelp")) {
 			logger.info("reviewmode : " + reviewmode.equals("getreviewhelp"));
@@ -161,7 +156,7 @@ public class MallController {
 		}
 	}
 
-	@RequestMapping("/showbasket") // 유저가 카트에 담은 책 조회
+	@RequestMapping("/showbasket") 	// 유저가 장바구니에 담은 책 조회
 	public String showbasket(Model model, HttpSession session) {
 		String UserId = (String) (session.getAttribute("Userid"));
 		List<Shoppingbasket> shoppingbaskets = shoppingbasketimpl.getshoppingbasketlist(UserId); // 유저가 담은 장바구니 목록을 담는다.
@@ -217,23 +212,11 @@ public class MallController {
 		return _token;
 	}
 
-	@RequestMapping(value = "/InsertPrice", method = RequestMethod.POST)
-	@ResponseBody
-	public void InsertPrice(@RequestParam String price, @RequestParam String merchant_uid) {
-		orderserviceimpl.insertprice(price, merchant_uid);
-	}
-
-	@RequestMapping(value = "/InsertList", method = RequestMethod.POST)
-	@ResponseBody
-	public void InsertList(@RequestParam String merchant_id, String[] list, Integer[] glist) {
-		orderserviceimpl.insertgoods(merchant_id, list, glist);
-	}
-
-	private int getamount(String merchant_uid) {
+	private int getamount(String merchant_uid) {		// 주문 총액
 		return orderserviceimpl.getpriceBymerchantid(merchant_uid);
 	}
 
-	@RequestMapping("/OrderResult")
+	@RequestMapping("/OrderResult")		// 주문 결과 페이지
 	public String orderresult(@RequestParam String merchant_id, Model model, Vbank vbank) {
 		logger.info("요청 받음1");
 		if (vbank.getVbanknum() != null) {
@@ -303,7 +286,7 @@ public class MallController {
 					connection.disconnect();
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
-					System.out.println("jsonObj " + jsonObj);
+					logger.info("반환된 JSON객체 : {}" + jsonObj);
 					if ((Long) jsonObj.get("code") == 0) {
 						getdata = (JSONObject) jsonObj.get("response"); // 이전에 책을 주문 할때,무통장 입금 신청을 했던 정보를 다시 가져옴
 						logger.info(
@@ -351,8 +334,8 @@ public class MallController {
 	public String mobile(@RequestParam String coupon, @RequestParam String imp_uid, @RequestParam String merchant_uid,
 			HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam String[] booknamelist,
 			@RequestParam Integer[] bookqtylist, @RequestParam String amount, HttpSession session) {
-		String referer = (String) request.getHeader("REFERER");
-		logger.info("referer : {}", referer);
+		String referer = (String) request.getHeader("REFERER");		// REFERER 사용 이유 : 사용자가 만약에 주문 도중에 뒤로 가기 버튼을 누르게 되면,
+		logger.info("referer : {}", referer);						// 				      정확한 주문이 DB에 저장이 안될수 있기 때문에 사전에 차단하기 위함
 		try {
 			JSONObject json = new JSONObject();
 			orderserviceimpl.insertprice(amount, merchant_uid);
@@ -509,24 +492,24 @@ public class MallController {
 		return null;
 	}
 
-	@RequestMapping("/showorder")
+	@RequestMapping("/showorder")		// 사용자가 주문했던 내역 페이지
 	public String showorder(HttpServletRequest request, HttpSession session, Model model) throws Exception {
 		String id = (String) session.getAttribute("Userid");
-		int curPageNum; // 현재 사용자가 보는 페이지
+		int curPageNum; 	// 현재 사용자가 보는 페이지
 		String page = request.getParameter("page");
-		System.out.println("page : " + page);
+		logger.info("page : {}",page);
 		if (page != null)
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		pagingrefactoringforOrder(curPageNum, request, model, id);
-		logger.info("UserId : {}", id);
+		pagingRefactoringForOrder(curPageNum, request, model, id);	// 고객의 주문 내역을 보는 페이지가 속한 Block의 첫번째 숫자와 마지막 숫자를 모델의 속성값을 넣음 -> 페이징 처리
+		logger.info("{}가 주문 내역 페이지를 확인",id);
 		List<Order> orders = orderserviceimpl.getorderinfo(id, curPageNum); // ordertable의 주문 데이터들
 		model.addAttribute("orders", orders);
 		List<List<Ordergoods>> ordergoods = new ArrayList<List<Ordergoods>>();
 		List<Vbank> vbanks = new ArrayList<Vbank>();
 		for (int i = 0; i < orders.size(); i++) {
-			ordergoods.add(orderserviceimpl.getordergoods(orders.get(i).getMerchant_id())); // 주문 번호로 시킨 상품들
+			ordergoods.add(orderserviceimpl.getordergoods(orders.get(i).getMerchant_id())); // 주문 번호로 시킨 책들
 			vbanks.add(orderserviceimpl.getvbankinfo(orders.get(i).getMerchant_id()));
 			logger.info("vbanks : {}", vbanks);
 			logger.info("orders.get(i).getMerchant_id() : {}", orders.get(i).getMerchant_id());
@@ -535,13 +518,20 @@ public class MallController {
 		model.addAttribute("vbanks", vbanks);
 		return "/order/orderinfo";
 	}
-
-	@RequestMapping("/error")
-	public String error() {
-		return "/error/404code";
+	
+	private int pagingRefactoringForOrder(int curPageNum, HttpServletRequest request, Model model, String id) {	// 고객의 주문 내역을 보는 페이지가 속한 Block의 첫번째 숫자와 마지막 숫자를 모델의 속성값을 넣음
+		String page = request.getParameter("page");	
+		if (page != null)
+			curPageNum = Integer.valueOf(page);
+		else
+			curPageNum = 1; 	// 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
+		logger.info("page : {}", page);
+		logger.info("curPageNum : {}", curPageNum);
+		paging.pagingforOrder(curPageNum, model, id);
+		return curPageNum;
 	}
 
-	@RequestMapping("/search")
+	@RequestMapping("/search")				// 책을 찾기 위한 URL
 	public String search(@RequestParam String subject, @RequestParam(value = "search", required = false) String search,
 			HttpServletRequest request, Model model) {
 		logger.info("search : {}", search == null);
@@ -570,69 +560,40 @@ public class MallController {
 		return "showcoupon";
 	}
 
-	private Model pagingModelKwd(String subject, String search, HttpServletRequest request, Model model) { // 사용자의 책 검색
-																											// 페이징 처리
-		int curPageNum = 0; // 현재 사용자가 보는 페이지
-		logger.info("pagingModelKwd search : {}", search);
-		curPageNum = pagingrefactoringforsearch(curPageNum, request, model, subject, search);
-		List<Goods> list = paging.dtoWithKwd(curPageNum, search, subject);
+	private Model pagingModelKwd(String subject, String search, HttpServletRequest request, Model model) { // 사용자의 책 검색 리스트 모델을 DB에서 조회하여 반환
+		int curPageNum = 0; 	// 현재 사용자가 보는 페이지
+		logger.info("사용자 검색 키워드 : {}", search);
+		curPageNum = pagingRefactoringForSearch(curPageNum, request, model, subject, search);	// 현재 해당하는 페이지가 속한 block의 첫번째 숫자,마지막 숫자 계산
+		List<Goods> list = paging.dtoWithKwd(curPageNum, search, subject);		// 사용자가 검색한 키워드에 해당하는 책 리스트를 DB에서 조회
 		model.addAttribute("list", list);
 		return model;
 	}
-
-	private Model pagingModelWithBook(Model model, HttpServletRequest request, String bigclass, String subclass) {
-		int curPageNum = 0; // 현재 사용자가 보는 페이지
-		curPageNum = pagingrefactoringforBook(curPageNum, request, model, bigclass, subclass);
-		List<Goods> list = paging.dtosWithBook(curPageNum, bigclass, subclass);
-		model.addAttribute("list", list);
-		return model;
-	}
-
-	private Model pagingModelCoupon(Model model, HttpServletRequest request, String Id) { // 쿠폰 내역의 페이징 처리
-		int curPageNum = 0; // 현재 사용자가 보는 페이지
-		curPageNum = pagingrefactoringforCoupon(curPageNum, request, model, Id);
-		List<Coupon> list = paging.coupons(curPageNum, Id);
-		model.addAttribute("list", list);
-		return model;
-	}
-
-	private Model pagingModelReply(Model model, HttpServletRequest request, String bookname) { // 책의 리뷰 댓글 페이징 처리
-		int curPageNum = 0; // 현재 사용자가 보는 페이지
-		curPageNum = pagingrefactoringforReply(curPageNum, request, model, bookname);
-		logger.info("curPageNum refactoring : {}", curPageNum);
-		List<Reply> list = paging.reply(curPageNum, bookname);
-		logger.info("list : {}", list);
-		model.addAttribute("list", list);
-		model.addAttribute("reviewlist", replyserviceimpl.getAllReply(bookname));
-		return model;
-	}
-
-	private Model pagingModelReplyLatest(Model model, HttpServletRequest request, String bookname) {
-		int curPageNum = 0; // 현재 사용자가 보는 페이지
-		curPageNum = pagingrefactoringforReplyLatest(curPageNum, request, model, bookname);
-		logger.info("curPageNum refactoring : {}", curPageNum);
-		List<Reply> list = paging.replylatest(curPageNum, bookname);
-		logger.info("list : {}", list);
-		model.addAttribute("list", list);
-		model.addAttribute("reviewlist", replyserviceimpl.getAllReply(bookname));
-		return model;
-	}
-
-	private int pagingrefactoringforsearch(int curPageNum, HttpServletRequest request, Model model, String subject,
-			String search) {
+	
+	private int pagingRefactoringForSearch(int curPageNum, HttpServletRequest request, Model model, String subject,
+			String search) {		// 현재 사용자가 검색을 하려는 페이지가 속한 block의 첫번째 숫자,마지막 숫자 계산
 		String page = request.getParameter("page");
 		if (page != null)
 			curPageNum = Integer.valueOf(page);
 		else
-			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
+			curPageNum = 1; 	// 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
 		logger.info("page : {}", page);
 		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforKwd(curPageNum, model, subject, search);
 		return curPageNum;
 	}
 
-	private int pagingrefactoringforBook(int curPageNum, HttpServletRequest request, Model model, String bigclass,
-			String subclass) {
+	
+	
+	private Model pagingModelWithBook(Model model, HttpServletRequest request, String bigclass, String subclass) {	// 사용자가 대분류중에서 소분류에 해당하는 책 리스트를 DB에서 조회하여 모델을 반환
+		int curPageNum = 0; 	// 현재 사용자가 보는 페이지
+		curPageNum = pagingRefactoringForBook(curPageNum, request, model, bigclass, subclass);		// 현재 해당하는 페이지가 속한 block의 첫번째 숫자,마지막 숫자 계산
+		List<Goods> list = paging.dtosWithBook(curPageNum, bigclass, subclass);	// 해당하는 페이지의 책 리스트를 뽑아옴
+		model.addAttribute("list", list);
+		return model;
+	}
+	
+	private int pagingRefactoringForBook(int curPageNum, HttpServletRequest request, Model model, String bigclass,
+			String subclass) {			// 현재 해당하는 페이지가 속한 block의 처음 숫자,마지막 숫자 계산
 		String page = request.getParameter("page");
 		if (page != null)
 			curPageNum = Integer.valueOf(page);
@@ -644,8 +605,18 @@ public class MallController {
 		return curPageNum;
 	}
 
-	private int pagingrefactoringforCoupon(int curPageNum, HttpServletRequest request, Model model, String Id) {
-		String page = request.getParameter("page");
+	
+	
+	private Model pagingModelCoupon(Model model, HttpServletRequest request, String Id) { // 특정 사용자가 가지고 있는 쿠폰 리스트를 DB에서 조회하여 모델을 반환
+		int curPageNum = 0; // 현재 사용자가 보는 페이지
+		curPageNum = pagingRefactoringForCoupon(curPageNum, request, model, Id); // 현재 특정 사용자가 받은 쿠폰리스트 중에서 해당하는 페이지가 속한 block의 첫번째 숫자,마지막 숫자 계산
+		List<Coupon> list = paging.coupons(curPageNum, Id);
+		model.addAttribute("list", list);
+		return model;
+	}
+	
+	private int pagingRefactoringForCoupon(int curPageNum, HttpServletRequest request, Model model, String Id) {
+		String page = request.getParameter("page");		// 현재 특정 사용자가 받은 쿠폰리스트 중에서 해당하는 페이지가 속한 block의 첫번째 숫자,마지막 숫자 계산
 		if (page != null)
 			curPageNum = Integer.valueOf(page);
 		else
@@ -656,7 +627,19 @@ public class MallController {
 		return curPageNum;
 	}
 
-	private int pagingrefactoringforReply(int curPageNum, HttpServletRequest request, Model model, String bookname) {
+	
+	
+	private Model pagingModelReply(Model model, HttpServletRequest request, String bookname) { // 특정 책의 리뷰 댓글을 DB에서 조회하여 모델을 반환
+		int curPageNum = 0; // 현재 사용자가 보는 페이지
+		curPageNum = pagingRefactoringForReply(curPageNum, request, model, bookname);
+		List<Reply> list = paging.reply(curPageNum, bookname);
+		logger.info("list : {}", list);
+		model.addAttribute("list", list);
+		model.addAttribute("reviewlist", replyserviceimpl.getAllReply(bookname));
+		return model;
+	}
+
+	private int pagingRefactoringForReply(int curPageNum, HttpServletRequest request, Model model, String bookname) {
 		String page = request.getParameter("page");
 		if (page != null)
 			curPageNum = Integer.valueOf(page);
@@ -667,8 +650,19 @@ public class MallController {
 		paging.pagingforReply(curPageNum, model, bookname);
 		return curPageNum;
 	}
+	
+	private Model pagingModelReplyLatest(Model model, HttpServletRequest request, String bookname) {	// 특정 책의 리뷰 댓글 중에 최신순에 해당하는 댓글 리뷰를 DB에 조회하여 모델을 반환
+		int curPageNum = 0; // 현재 사용자가 보는 페이지
+		curPageNum = pagingRefactoringForReplyLatest(curPageNum, request, model, bookname);
+		logger.info("curPageNum refactoring : {}", curPageNum);
+		List<Reply> list = paging.replylatest(curPageNum, bookname);
+		logger.info("list : {}", list);
+		model.addAttribute("list", list);
+		model.addAttribute("reviewlist", replyserviceimpl.getAllReply(bookname));
+		return model;
+	}
 
-	private int pagingrefactoringforReplyLatest(int curPageNum, HttpServletRequest request, Model model,
+	private int pagingRefactoringForReplyLatest(int curPageNum, HttpServletRequest request, Model model,
 			String bookname) {
 		String page = request.getParameter("page");
 		if (page != null)
@@ -679,22 +673,5 @@ public class MallController {
 		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforReplyLatest(curPageNum, model, bookname);
 		return curPageNum;
-	}
-
-	private int pagingrefactoringforOrder(int curPageNum, HttpServletRequest request, Model model, String id) {
-		String page = request.getParameter("page");
-		if (page != null)
-			curPageNum = Integer.valueOf(page);
-		else
-			curPageNum = 1; 	// 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : {}", page);
-		logger.info("curPageNum : {}", curPageNum);
-		paging.pagingforOrder(curPageNum, model, id);
-		return curPageNum;
-	}
-
-	@RequestMapping("/access_denied_page")
-	public String access_denied_page() {
-		return "/error/access_denied_page";
 	}
 }

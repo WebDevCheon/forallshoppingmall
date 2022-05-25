@@ -35,6 +35,7 @@
 	<input type = "hidden" value = "${sessionScope.Userid}" name = "Userid">
 	<div style = "text-align:center;">
 	<input class = "btn amado-btn" type = "submit" value = "비밀번호 변경">
+	<input type="hidden" name="${_csrf.parameterName}" id = "csrftoken" value="${_csrf.token}"/>
   	</div>
   </form>
  </div> 	

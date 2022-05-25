@@ -1,4 +1,5 @@
 	var csrf = document.getElementById("csrftoken").value;	
+	
 	function moveurl(){
  			 if($("#bigclass").val() == "novel"){
 				location.href = contextPath + "/admin/registerForm?bigclass=novel";

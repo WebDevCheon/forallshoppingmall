@@ -9,7 +9,7 @@
 </head>
 <body>
 	<script>
-		location.href = "${pageContext.request.contextPath}/home";
+		location.href = "${pageContext.request.contextPath}/";
 	</script>
 </body>
 </html>
