@@ -32,7 +32,7 @@ Forallshoppingmall BookStore
 > <img src = "https://user-images.githubusercontent.com/57096651/169266261-ba2ae107-167d-4d8a-a7ad-c2c8edad60ed.gif" width = "50%">
 
 > * 결제 결과(네이버 영수증)
-> <img src = "https://user-images.githubusercontent.com/57096651/169266344-1174aebd-e01b-496f-ac27-9c6f03c38d2a.PNG" width = "50%">
+> <img src = "https://user-images.githubusercontent.com/57096651/170526844-0b5ec4c2-8a7b-40a2-9365-b71d3e834fa8.PNG" width = "50%">
 
 > * 네이버 로그인 연동
 > <img src = "https://user-images.githubusercontent.com/57096651/169266585-7883dd3e-54a4-4a8b-81c3-4fdf756f2da4.gif" width = "50%">
