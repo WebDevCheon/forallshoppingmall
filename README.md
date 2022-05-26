@@ -46,7 +46,7 @@ Forallshoppingmall BookStore
 
 > * 휴대폰 결제 / 카드 결제 / 무통장 입금 / 실시간 이체
 > * 아임포트 서버 API 연동
-> * 주문 정보(Client) -> 도서 쇼핑몰 서버 -> 아임포트 서버 -> 카드사 서버(Request Proccess)
+> * 주문 정보(Client) -> 아임포트 서버 -> PG 서버 -> 카드사 서버 (데이터 흐름)
 
 ### 2. REST
 > * AJAX Request(Client) Request -> ResponseEntity(Server) Response
@@ -59,7 +59,7 @@ Forallshoppingmall BookStore
 > * AWS의 HTTPS ssl 인증서 적용
 
 ### 4.네이버 로그인 연동
-> * 네아로 적용
+> * 네아로(Naver Login API) 적용
 > * 네이버 로그인 -> Naver Developers에서 발급해준 토큰값이 맞다면,CallBack URL Redirect(스프링 시큐리티 권한 승인) 
 
 ### 5. 배포 환경
