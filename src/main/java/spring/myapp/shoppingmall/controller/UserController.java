@@ -1,23 +1,19 @@
 package spring.myapp.shoppingmall.controller;
 
 import java.io.IOException;
-
 import java.util.List;
 import java.util.Random;
-
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -28,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import spring.myapp.shoppingmall.dto.User;
 import spring.myapp.shoppingmall.service.UserServiceImpl;
 
@@ -59,9 +54,6 @@ public class UserController
 			user.setId(cookie.getValue());
 			model.addAttribute("User",user);
 		}
-		logger.info("logout : {}",logout == null);
-		logger.info("error : {}",error == null);
-		
 		if(error != null)
 			model.addAttribute("error","아이디 또는 비밀번호가 일치하지 않습니다.");
 		if(logout != null)

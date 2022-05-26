@@ -641,6 +641,7 @@
 		 headers: {"Content-Type": "application/json","X-CSRF-Token":csrf},
 		 method : "POST",
 		 success : function(data) {
+			alert(data);
 			document.getElementById("sname").value = data.name;
 			document.getElementById("saddr").value = data.address;
 			document.getElementById("sphone").value = data.phone;

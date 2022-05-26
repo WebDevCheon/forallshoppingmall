@@ -1,15 +1,12 @@
 package spring.myapp.shoppingmall.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import spring.myapp.shoppingmall.restcontrollerexception.ErrorResponse;
-import spring.myapp.shoppingmall.restcontrollerexception.UserNotFindExceptionHandler;
+import spring.myapp.shoppingmall.exception.ErrorResponse;
+import spring.myapp.shoppingmall.exception.UserNotFindExceptionHandler;
 
 @ControllerAdvice
 public class ExceptionGlobalController {

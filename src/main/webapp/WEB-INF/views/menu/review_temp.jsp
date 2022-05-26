@@ -371,7 +371,7 @@
 									</span>
 								</dd>
 								<dd class="comment">
-									<c:if test = "${not empty imgfileurl}">
+									<c:if test = "${not empty review.imgfileurl}">
 										<img src = "${review.imgfileurl}" width = "100" height = "100">
 									</c:if>
 									<br>
@@ -394,11 +394,7 @@
 						<c:if test = "${not empty reviewreplylist}">
 							<% 
 								for(int i=0;i<reviewreplylist.size();i++){
-									if(reviewreplylist.get(i).getRid().getRid() == list.get(j).getRid()){
-										//System.out.println("reviewreplylist.get(i).getRid().getRid() == list.get(j).getRid() : " + reviewreplylist.get(i).getRid().getRid() + "," + list.get(j).getRid());
-										//System.out.println("reviewreplyid : " + reviewreplylist.get(i).getReviewreplyid() + "," + reviewreplylist.get(i).getContent());
-										//System.out.println("rid : " + list.get(j).getRid() + "," + list.get(j).getContent());
-										//System.out.println("reviewreplylist.get(i).getRid().getRid() == list.get(j).getRid() : " + (reviewreplylist.get(i).getRid().getRid() == list.get(j).getRid()));
+									if(reviewreplylist.get(i).getRid().getRid() == list.get(j).getRid()) {
 							%>
 							<c:set var = "userid" value = "<%=reviewreplylist.get(i).getUser_id()%>"/>
 								<div class="reply_wrap">
@@ -424,9 +420,6 @@
 									</div>	
 								</div>			
 							<%
-									} else{
-										
-										
 									}
 								}
 							%>
@@ -522,7 +515,7 @@
 				headers : {"X-CSRF-Token":csrf},
 				data : JSON.stringify({
 					"user_id" : '${sessionScope.Userid}',  //유저 아이디
-					"bookname" : '${good.name}',  //책 이름
+					"bookname" : '${good.name}',  // 책 이름
 					"reviewContent" : document.getElementById('reviewReply' + rid).value,  //리뷰글에 댓글을 다는 글의 내용
 					"rid" : rid  //댓글을 달고자 하는 리뷰글의 글번호
 				}),

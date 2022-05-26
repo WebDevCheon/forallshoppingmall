@@ -99,7 +99,7 @@
 									</span>
 								</dd>
 								<dd class="comment">
-									<c:if test = "${not empty imgfileurl}">
+									<c:if test = "${not empty review.imgfileurl}">
 										<img src = "${review.imgfileurl}" width = "100" height = "100">
 									</c:if>
 									<br>
@@ -151,9 +151,6 @@
 									</div>	
 								</div>			
 							<%
-									} else{
-										
-										
 									}
 								}
 							%>

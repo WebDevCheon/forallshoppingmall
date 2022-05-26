@@ -9,6 +9,13 @@ public class CustomUserDetails implements UserDetails{
 	private static final long serialVersionUID = 1L;
 	private String id;					
 	private String pw;	
+	private Collection<? extends GrantedAuthority> authorities;
+	
+	public CustomUserDetails(String id,String pw,Collection<? extends GrantedAuthority> authorities) {
+		this.id = id;
+		this.pw = pw;
+		this.authorities = authorities;
+	}
 	
 	public String getId() {
 		return id;
@@ -19,7 +26,7 @@ public class CustomUserDetails implements UserDetails{
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return this.authorities;
 	}
 
 	@Override

@@ -4,17 +4,14 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.hibernate.query.Query;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import spring.myapp.shoppingmall.dto.Bookrecommend;
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
@@ -50,7 +47,7 @@ public class MallDao {
 	      List<Goods> goodsList = query.getResultList();
 	      
 	      return goodsList;
-	   }
+	}
 	
 	public void insertMerchant(String id,String merchant_id,String phoneNumber,String address,String buyer_name,String memo,int price) {	//고객이 주문 결제 버튼을 누르는 순간 주문 아이디 DB에 넣기
 		Session session = getSession();
@@ -197,8 +194,7 @@ public class MallDao {
 	}
 	
 	
-	public int getCount(String kind) 
-	{
+	public int getCount(String kind) {
 		Session session = getSession();
 		Query<Goods> query = session.createQuery("from Goods where kind = :kind",Goods.class);
 		query.setParameter("kind",kind);
@@ -266,12 +262,12 @@ public class MallDao {
 	}
 	
 	public Order getMerchantid(String merchant_id) {
-			Session session = getSession();
-			Query query = session.createQuery("from Order where merchant_id = :merchant_id");
-			query.setParameter("merchant_id",merchant_id);
-			Order order = (Order)query.getSingleResult();
-			logger.info("Order값 확인 : {}",order);
-			return order;
+		Session session = getSession();
+		Query query = session.createQuery("from Order where merchant_id = :merchant_id");
+		query.setParameter("merchant_id",merchant_id);
+		Order order = (Order)query.getSingleResult();
+		logger.info("Order값 확인 : {}",order);
+		return order;
 	}
 	
 	public String getimp_uid(String merchant_uid) {
@@ -421,6 +417,7 @@ public class MallDao {
 		List<Order> orderlist = query.getResultList();
 		return orderlist;
 	}
+	
 	public List<Ordergoods> getordergoods(String merchant_id) {
 		Session session = getSession();
 		Query<Ordergoods> query = session.createQuery("from Ordergoods where merchant_id = :merchant_id",Ordergoods.class);
@@ -428,8 +425,8 @@ public class MallDao {
 		List<Ordergoods> ordergoodslist = query.getResultList();
 		return ordergoodslist;
 	}
+	
 	public Vbank getvbankinfo(String merchant_id){
-		//0개인 경우 1개인 경우 2개 이상인경우...
 		Session session = getSession();
 		Query<Vbank> query = session.createQuery("from Vbank where merchant_id = :merchant_id",Vbank.class);
 		query.setParameter("merchant_id",merchant_id);
@@ -470,11 +467,10 @@ public class MallDao {
 		Query<Refund> query = session.createQuery("from Refund where merchant_id = :merchant_id",Refund.class);
 		query.setParameter("merchant_id",merchant_id);
 		List<Refund> refundlist = query.getResultList();
-		if(refundlist.size() > 0) {
+		if(refundlist.size() > 0)
 			return refundlist.get(0);
-		} else {
+		else
 			return null;
-		}
 	}
 	
 	public int remaincheck(String[] newname, Integer[] newqty) {
@@ -501,7 +497,7 @@ public class MallDao {
 		logger.info("{}",user.getCarts());
 		return user.getCarts().size();
 	}
-
+	
 	public void rollbackdeletemerchantid(String merchant_id) {
 		Session session = getSession();
 		Query query = session.createQuery("delete from Ordergoods where merchant_id = :merchant_id");

@@ -15,7 +15,8 @@ import spring.myapp.shoppingmall.controller.MallController;
 import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.service.CouponServiceImpl;
 
-public class EchoHandler extends TextWebSocketHandler {
+public class EchoHandler extends TextWebSocketHandler {		// 유저의 쿠폰 알람 기능
+															// 유저에게 관리자가 쿠폰을 발급했을 때,유저에게 알림이 가는 기능
 	private static final Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 	private Map<String,Object> userSessions = new HashMap<>();
 	private Map<String,Integer> couponAlarmChecklist = new HashMap<>();

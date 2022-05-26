@@ -498,12 +498,6 @@ div[contenteditable=true] {
     </div>
 </div>
 
-
-
-
-
-
-
     <!-- ##### Footer Area Start ##### -->
     <footer class="footer_area clearfix">
         <div class="container">
@@ -739,7 +733,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		});
 	}
 	
-	function uploadReviewFile(){
+	function uploadReviewFile() {
 		   var formData = new FormData();
 	       formData.append('file',$("#reviewImageFile")[0].files[0]);
 	       formData.append('reviewimgflag',1);
@@ -757,21 +751,23 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		  		console.log(typeof data);
 		  		var obj = JSON.parse(data);
 		  		console.log(obj);
-		  		alert(obj.url);
+		  		/*
 		  		var img = document.createElement("img");
 		      	img.src = obj.url;
 		      	img.setAttribute("width","50px");
 		  		img.setAttribute("height","50px");
 		  		document.getElementById("loadimg").appendChild(img);
+		  		*/
 		  		$("#reviewimgurl").val(obj.url);
-		  		alert("이미지 업로드 경로 : " + obj.url);
+		  		alert("이미지 업로드 완료");
+		  		//alert("이미지 업로드 경로 : " + obj.url);
 		  	},
-		  	error:function(request,status,error){
+		  	error:function(request,status,error) {
 	             alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 	          }
 		  });
     }
-	window.onload = function(){
+	window.onload = function() {
 		document.getElementById("reviewImageFile").addEventListener("change",uploadReviewFile);
 	}
 	</script>    

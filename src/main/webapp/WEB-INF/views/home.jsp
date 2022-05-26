@@ -391,7 +391,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
   		<%
   			session.removeAttribute("gettokenerror");
   		%>
-  	}else if("${sessionScope.getprofileerror}" != ""){
+  	} else if("${sessionScope.getprofileerror}" != ""){
   		alert("${sessionScope.getprofileerror}");
   		<%
 			session.removeAttribute("getprofileerror");

@@ -1,8 +1,9 @@
-package spring.myapp.shoppingmall.restcontrollerexception;
+package spring.myapp.shoppingmall.exception;
 
 public class UserNotFindExceptionHandler extends RuntimeException {
 	private static final long serialVersionUID = -4311724323738824421L;
 	private String id;
+	
 	public UserNotFindExceptionHandler(String id) {
 		super();
 		this.id = id;

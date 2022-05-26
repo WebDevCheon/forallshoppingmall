@@ -1,4 +1,4 @@
-package spring.myapp.shoppingmall.restcontrollerexception;
+package spring.myapp.shoppingmall.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

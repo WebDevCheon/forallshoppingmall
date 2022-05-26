@@ -20,6 +20,8 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
@@ -39,13 +40,10 @@ import spring.myapp.shoppingmall.dto.Shoppingbasket;
 import spring.myapp.shoppingmall.dto.User;
 import spring.myapp.shoppingmall.dto.Vbank;
 import spring.myapp.shoppingmall.paging.Paging;
-import spring.myapp.shoppingmall.service.AdminServiceImpl;
 import spring.myapp.shoppingmall.service.CouponServiceImpl;
-import spring.myapp.shoppingmall.service.FindJeongbo;
 import spring.myapp.shoppingmall.service.OrderServiceImpl;
 import spring.myapp.shoppingmall.service.ProductServiceImpl;
 import spring.myapp.shoppingmall.service.ReplyServiceImpl;
-import spring.myapp.shoppingmall.service.RequestRefund;
 import spring.myapp.shoppingmall.service.ShoppingBasketImpl;
 import spring.myapp.shoppingmall.service.UserServiceImpl;
 
@@ -94,9 +92,9 @@ public class MallController {
 		if (request.getSession().getAttribute("Userid") != null)
 			logger.info("ID : " + request.getSession().getAttribute("Userid") + ", 대분류 : {}, 소분류: {}", bigclass,
 					subclass);
-		else {
+		else
 			logger.info("대분류 : {}, 소분류: {}", bigclass, subclass);
-		}
+		
 		if (bigclass == null || subclass == null) {
 			bigclass = "novel"; 	 // 책의 대분류
 			subclass = "japannovel"; // 책의 소분류
@@ -112,11 +110,6 @@ public class MallController {
 			@RequestParam(value = "goods_id", required = false) String goods_id,
 			@RequestParam(value = "mode", required = false) String mode, Model model, HttpSession session,
 			HttpServletRequest request) {
-		logger.info("product mode : {}", mode);
-		logger.info("bookname : {}", bookname);
-		logger.info("책 상세 보기 창에서 리뷰 댓글 페이지를 넘기는 경우");
-		logger.info("리뷰 댓글 페이지 넘기기 - bookname : {}", bookname);
-		logger.info("책의 아이디 : {}", goods_id);
 		model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
 		model.addAttribute("mode", mode);
 		logger.info("getreviewlatest : {}", mode);
@@ -136,24 +129,21 @@ public class MallController {
 			@RequestParam(value = "bookname", required = false) String bookname,
 			@RequestParam(value = "goods_id", required = false) String goods_id, Model model,
 			HttpServletRequest request) {
-		logger.info("bookname : {}", bookname);
-		logger.info("책 아이디 : {}", goods_id);
-		logger.info("reviewmode : " + reviewmode);
-		if (reviewmode.equals("getreviewhelp")) {
-			logger.info("reviewmode : " + reviewmode.equals("getreviewhelp"));
-			model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
-			model.addAttribute("mode", "'getreviewhelp'");
-			pagingModelReply(model, request, bookname);
-			model.addAttribute("reviewreplylist", productserviceimpl.getreviewreply(bookname));
-			return "/menu/getreviewhelp";
-		} else {
-			logger.info("reviewmode : " + reviewmode.equals("getreviewlatest"));
-			model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
-			model.addAttribute("mode", "'getreviewlatest'");
-			pagingModelReplyLatest(model, request, bookname);
-			model.addAttribute("reviewreplylist", productserviceimpl.getreviewreply(bookname));
-			return "/menu/getreviewlatest";
-		}
+			if(reviewmode.equals("getreviewhelp")) {
+				logger.info("reviewmode : " + reviewmode.equals("getreviewhelp"));
+				model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
+				model.addAttribute("mode", "'getreviewhelp'");
+				pagingModelReply(model, request, bookname);
+				model.addAttribute("reviewreplylist", productserviceimpl.getreviewreply(bookname));
+				return "/menu/getreviewhelp";
+			} else {
+				logger.info("reviewmode : " + reviewmode.equals("getreviewlatest"));
+				model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
+				model.addAttribute("mode", "'getreviewlatest'");
+				pagingModelReplyLatest(model, request, bookname);
+				model.addAttribute("reviewreplylist", productserviceimpl.getreviewreply(bookname));
+				return "/menu/getreviewlatest";
+			}
 	}
 
 	@RequestMapping("/showbasket") 	// 유저가 장바구니에 담은 책 조회
@@ -163,7 +153,6 @@ public class MallController {
 		User user = userserviceimpl.finduserbyid(UserId);
 		model.addAttribute("list", shoppingbaskets);
 		model.addAttribute("User", user);
-		logger.info("showbasket : {}", shoppingbaskets.size());
 		return "/order/shoppingbasketdesign";
 	}
 
@@ -218,7 +207,6 @@ public class MallController {
 
 	@RequestMapping("/OrderResult")		// 주문 결과 페이지
 	public String orderresult(@RequestParam String merchant_id, Model model, Vbank vbank) {
-		logger.info("요청 받음1");
 		if (vbank.getVbanknum() != null) {
 			model.addAttribute("vbank_date", vbank.getVbankdate());
 			model.addAttribute("vbank_code", vbank.getVbankcode()); // 은행 코드 번호
@@ -226,13 +214,9 @@ public class MallController {
 			model.addAttribute("vbank_num", vbank.getVbanknum()); // 은행 계좌번호
 			model.addAttribute("vbank_name", vbank.getVbankname()); // 은행 이름
 		}
-		logger.info("요청 받음2");
-		if (orderserviceimpl.getMerchantId(merchant_id) != null) {
-			logger.info("요청 받음3");
+		if (orderserviceimpl.getMerchantId(merchant_id) != null)
 			model.addAttribute("Order", orderserviceimpl.getMerchantId(merchant_id));
-		}
 		model.addAttribute("Ordergoods", orderserviceimpl.getordergoods(merchant_id));
-		logger.info("요청 받음4");
 		return "/order/orderresult";
 	}
 

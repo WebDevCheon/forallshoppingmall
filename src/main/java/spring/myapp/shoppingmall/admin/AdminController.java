@@ -133,10 +133,10 @@ public class AdminController {
 		adminserviceimpl.settodaybookselect(bookid);
 	}
 
-	private Model pagingModelAdmin(Model model, HttpServletRequest request) { 	// 이달의 인기서적 등록 관리자 페이지에서 관리자가 구매량의 순으로 책을
+	private Model pagingModelAdmin(Model model, HttpServletRequest request) { 	// 이달의 인기서적 등록 페이지(관리자 페이지)에서 관리자가 구매량의 순으로 책을
 																				// 볼 수 있도록 해주는 페이징 처리
 		int curPageNum = 0;
-		curPageNum = pagingrefactoringforAdmin(curPageNum, request, model);
+		curPageNum = pagingRefactoringForAdmin(curPageNum, request, model);
 		logger.info("curPageNum Model Admin : " + curPageNum);
 		List<Goods> monthbooklist = adminserviceimpl.getmonthbooklist(curPageNum);
 		logger.info("monthbooklist : " + monthbooklist);
@@ -144,7 +144,7 @@ public class AdminController {
 		return model;
 	}
 
-	private int pagingrefactoringforAdmin(int curPageNum, HttpServletRequest request, Model model) {
+	private int pagingRefactoringForAdmin(int curPageNum, HttpServletRequest request, Model model) {
 		String page = request.getParameter("page");
 		if (page != null)
 			curPageNum = Integer.valueOf(page);
