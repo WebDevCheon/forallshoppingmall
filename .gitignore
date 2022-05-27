@@ -7,8 +7,8 @@ reviewUpload/
 bin/
 tmp/
 .project
-.xml
-.keystore
+pom.xml
+tomcatssl.keystore
 .classpath
 target/
 .settings/
