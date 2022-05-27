@@ -7,8 +7,8 @@ reviewUpload/
 bin/
 tmp/
 .project
-.keystore
 .xml
+.keystore
 .classpath
 target/
 .settings/
