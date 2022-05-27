@@ -16,7 +16,9 @@ Forallshoppingmall BookStore
 > Pattern : MVC (View : JSP)
 > <br><br>
 > 배포 환경 : AWS EC2 Linux (t3.xlarge) <br>
-<hr>
+
+## 데이터 입출력 구조
+> <img src = "https://user-images.githubusercontent.com/57096651/170730567-eeb186fe-27ba-4dbf-ad2b-4b326ed2ba1e.PNG" width = "80%">
 
 ## 동영상 시연
 > * SpringSecurity에 의해 Request Filtering -> LoginForm
@@ -46,10 +48,10 @@ Forallshoppingmall BookStore
 
 > * 휴대폰 결제 / 카드 결제 / 무통장 입금 / 실시간 이체
 > * 아임포트 서버 API 연동
-> * 주문 정보(Client) -> 아임포트 서버 -> PG 서버 -> 카드사 서버 (데이터 흐름)
+> * 주문 정보(Client) -> 아임포트 서버 -> PG 서버 -> 카드사 서버 (요청의 흐름)
 
 ### 2. REST
-> * AJAX Request(Client) Request -> ResponseEntity(Server) Response
+> * AJAX Request -> ResponseEntity Response
 > * Development Tool : PostMan
 
 ### 3. 보안
@@ -65,7 +67,7 @@ Forallshoppingmall BookStore
 ### 5. 배포 환경
 > * AWS EC2(Tomcat 설치)
 > * 도서의 이미지 파일은 S3 FileSystem 업로드 / 저장
-> * LoadBalancer 적용(check : chrome dev tool에서 접속 IP 확인)
+> * LoadBalancer 적용(확인 방법 : chrome dev tool에서 접속 IP 확인)
 
 ## DB 설계
 <img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/forallshoppingmall+%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4.PNG" width = "60%">
