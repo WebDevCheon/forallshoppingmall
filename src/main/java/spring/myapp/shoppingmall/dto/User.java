@@ -1,7 +1,6 @@
 package spring.myapp.shoppingmall.dto;
 
 import java.util.ArrayList;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

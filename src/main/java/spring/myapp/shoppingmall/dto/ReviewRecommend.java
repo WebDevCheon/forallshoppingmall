@@ -17,7 +17,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "reviewrecommend")
-public class ReviewRecommend {
+public class ReviewRecommend { 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int reviewrecommendid;

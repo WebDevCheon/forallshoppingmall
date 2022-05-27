@@ -9,7 +9,7 @@ import spring.myapp.shoppingmall.exception.ErrorResponse;
 import spring.myapp.shoppingmall.exception.UserNotFindExceptionHandler;
 
 @ControllerAdvice
-public class ExceptionGlobalController {
+public class ExceptionGlobalController {		// 에러 처리
 	@ExceptionHandler(UserNotFindExceptionHandler.class)
 	public ResponseEntity<ErrorResponse> UserNotFindExceptionHandlerResponse(HttpServletRequest req,UserNotFindExceptionHandler exp){
 		String requestURL = req.getRequestURI();

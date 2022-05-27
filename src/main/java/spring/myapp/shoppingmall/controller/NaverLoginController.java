@@ -29,10 +29,8 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import spring.myapp.shoppingmall.dto.CustomUserDetails;
 import spring.myapp.shoppingmall.dto.User;
-import spring.myapp.shoppingmall.security.LoginAuthenticationProvider;
 import spring.myapp.shoppingmall.service.UserServiceImpl;
 
 @Controller
@@ -136,10 +134,10 @@ public class NaverLoginController {
 					JSONObject profilejson = (JSONObject)jsonObj.get("response");
 					logger.info("profilejson : {}",profilejson);
 					String navernickname = (String)profilejson.get("nickname");
-					if(userserviceimpl.finduserbyid(navernickname) == null) {  // 회원가입을 하지 않은 경우
+					if(userserviceimpl.findUserById(navernickname) == null) {  // 회원가입을 하지 않은 경우
 						User naveruser = new User();
 						naveruser.setId(navernickname);
-						naveruser.setPassword("forallshoppingmallnaveruserpassword");  //관리자만 아는 비밀번호
+						naveruser.setPassword("forallshoppingmallnaveruserpassword");  // 네이버 유저만 특별하게 DB에 저장되는 비밀번호(의미 업음)
 						naveruser.setAuthorities("ROLE_USER");
 						naveruser.setEmail("forallshoppingmallnaveremail");
 						naveruser.setAddress("forallshoppingmallnaveraddress");
@@ -149,7 +147,7 @@ public class NaverLoginController {
 						naveruser.setGrade("Bronze");
 						naveruser.setEnabled(0);  //로그인폼으로 접속 금지
 						naveruser.setNaver(1);  //네이버용 계정으로 로그인함 
-						userserviceimpl.joinnaveruser(naveruser);
+						userserviceimpl.joinNaverUser(naveruser);
 					}
 					session.setAttribute("Userid",navernickname);
 					User userinfo = new User();
@@ -157,21 +155,22 @@ public class NaverLoginController {
 					userinfo.setEnabled(1);
 					userinfo.setPassword(null);		// 도서 쇼핑몰 서버에서 알아서 네이버 아이디 연동 로그인 같은 경우는 특별하게 지정
 					
-					// 스프링 시큐리티에 의해서 권한 승인됨
-					SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_USER");
+					// 스프링 시큐리티에 의해서 권한 승인
+					SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_USER");	// 유저 권한 승인
 					List<SimpleGrantedAuthority> collection = new ArrayList<>();
 					collection.add(simpleGrantedAuthority);
 					CustomUserDetails customUserDetails = new CustomUserDetails(navernickname,null,collection);
-				    Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails.getId(),null, customUserDetails.getAuthorities());
+				    Authentication authentication = 
+				    		new UsernamePasswordAuthenticationToken(customUserDetails.getId(),null,customUserDetails.getAuthorities());
 				    SecurityContextHolder.getContext().setAuthentication(authentication);
 					
 					SavedRequest savedRequest = requestCache.getRequest(request, response);
-			    	logger.info("savedRequest: {}",savedRequest); 
-			        if(savedRequest != null) { 		// 권한이 필요한 URL을 누르고 로그인 폼으로 이동 했다면,다시 그 URL로 Redirect
+
+					if(savedRequest != null) { 		
 			            String targetUrl = savedRequest.getRedirectUrl(); 
-			            redirectStratgy.sendRedirect(request, response, targetUrl); 
-			        } else			// 직접 브라우저 URL로 로그인 폼에 접근
-			            redirectStratgy.sendRedirect(request, response, defaultUrl);
+			            redirectStratgy.sendRedirect(request, response, targetUrl); // 권한이 필요한 URL을 누르고 로그인 폼으로 이동 했다면,다시 그 URL로 Redirect
+			        } else			
+			            redirectStratgy.sendRedirect(request, response, defaultUrl); // 직접 브라우저 URL로 로그인 폼에 접근
 					return "home";
 				} catch(Exception e) {
 					logger.info("접근 토큰을 이용하여 프로필 정보 조회 API를 호출 도중 에러 발생");

@@ -10,18 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
 import spring.myapp.shoppingmall.dto.Order;
@@ -52,22 +47,22 @@ public class MallController {
 	private static final Logger logger = LoggerFactory.getLogger(MallController.class);
 
 	@Autowired
-	private ShoppingBasketImpl shoppingbasketimpl;
+	private ShoppingBasketImpl shoppingBasketImpl;
 
 	@Autowired
-	private CouponServiceImpl couponserviceimpl;
+	private CouponServiceImpl couponServiceImpl;
 
 	@Autowired
-	private ProductServiceImpl productserviceimpl;
+	private ProductServiceImpl productServiceImpl;
 
 	@Autowired
-	private OrderServiceImpl orderserviceimpl;
+	private OrderServiceImpl orderServiceImpl;
 
 	@Autowired
-	private ReplyServiceImpl replyserviceimpl;
+	private ReplyServiceImpl replyServiceImpl;
 
 	@Autowired
-	private UserServiceImpl userserviceimpl;
+	private UserServiceImpl userServiceImpl;
 
 	@Autowired
 	private Paging paging;
@@ -80,8 +75,8 @@ public class MallController {
 
 	@RequestMapping("/shopentrance")			// 책 상세 보기 전에 있는 전체적인 책들의 소개 페이지
 	public String shopdefault(Model model) {
-		model.addAttribute("monthlist", productserviceimpl.getmonthbooklist()); // 이달의 인기 서적
-		model.addAttribute("todaybook", productserviceimpl.gettodaybook()); 	// 오늘의 인기 서적
+		model.addAttribute("monthlist", productServiceImpl.getMonthBookList()); // 이달의 인기 서적
+		model.addAttribute("todaybook", productServiceImpl.getTodayBook()); 	// 오늘의 인기 서적
 		return "/menu/shopentrance";
 	}
 
@@ -110,7 +105,7 @@ public class MallController {
 			@RequestParam(value = "goods_id", required = false) String goods_id,
 			@RequestParam(value = "mode", required = false) String mode, Model model, HttpSession session,
 			HttpServletRequest request) {
-		model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
+		model.addAttribute("good", productServiceImpl.getProductDetails(Integer.valueOf(goods_id)));
 		model.addAttribute("mode", mode);
 		logger.info("getreviewlatest : {}", mode);
 		if (mode.equals("'getreviewlatest'")) {
@@ -120,7 +115,7 @@ public class MallController {
 			logger.info("replyhelp 실행");
 			pagingModelReply(model, request, bookname);
 		}
-		model.addAttribute("reviewreplylist", productserviceimpl.getreviewreply(bookname));
+		model.addAttribute("reviewreplylist", productServiceImpl.getReviewReply(bookname));
 		return "/menu/product";
 	}
 
@@ -131,17 +126,17 @@ public class MallController {
 			HttpServletRequest request) {
 			if(reviewmode.equals("getreviewhelp")) {
 				logger.info("reviewmode : " + reviewmode.equals("getreviewhelp"));
-				model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
+				model.addAttribute("good", productServiceImpl.getProductDetails(Integer.valueOf(goods_id)));
 				model.addAttribute("mode", "'getreviewhelp'");
 				pagingModelReply(model, request, bookname);
-				model.addAttribute("reviewreplylist", productserviceimpl.getreviewreply(bookname));
+				model.addAttribute("reviewreplylist", productServiceImpl.getReviewReply(bookname));
 				return "/menu/getreviewhelp";
 			} else {
 				logger.info("reviewmode : " + reviewmode.equals("getreviewlatest"));
-				model.addAttribute("good", productserviceimpl.getproductdetails(Integer.valueOf(goods_id)));
+				model.addAttribute("good", productServiceImpl.getProductDetails(Integer.valueOf(goods_id)));
 				model.addAttribute("mode", "'getreviewlatest'");
 				pagingModelReplyLatest(model, request, bookname);
-				model.addAttribute("reviewreplylist", productserviceimpl.getreviewreply(bookname));
+				model.addAttribute("reviewreplylist", productServiceImpl.getReviewReply(bookname));
 				return "/menu/getreviewlatest";
 			}
 	}
@@ -149,8 +144,8 @@ public class MallController {
 	@RequestMapping("/showbasket") 	// 유저가 장바구니에 담은 책 조회
 	public String showbasket(Model model, HttpSession session) {
 		String UserId = (String) (session.getAttribute("Userid"));
-		List<Shoppingbasket> shoppingbaskets = shoppingbasketimpl.getshoppingbasketlist(UserId); // 유저가 담은 장바구니 목록을 담는다.
-		User user = userserviceimpl.finduserbyid(UserId);
+		List<Shoppingbasket> shoppingbaskets = shoppingBasketImpl.getShoppingBasketList(UserId); // 유저가 담은 장바구니 목록을 담는다.
+		User user = userServiceImpl.findUserById(UserId);
 		model.addAttribute("list", shoppingbaskets);
 		model.addAttribute("User", user);
 		return "/order/shoppingbasketdesign";
@@ -202,7 +197,7 @@ public class MallController {
 	}
 
 	private int getamount(String merchant_uid) {		// 주문 총액
-		return orderserviceimpl.getpriceBymerchantid(merchant_uid);
+		return orderServiceImpl.getPriceByMerchantId(merchant_uid);
 	}
 
 	@RequestMapping("/OrderResult")		// 주문 결과 페이지
@@ -214,9 +209,9 @@ public class MallController {
 			model.addAttribute("vbank_num", vbank.getVbanknum()); // 은행 계좌번호
 			model.addAttribute("vbank_name", vbank.getVbankname()); // 은행 이름
 		}
-		if (orderserviceimpl.getMerchantId(merchant_id) != null)
-			model.addAttribute("Order", orderserviceimpl.getMerchantId(merchant_id));
-		model.addAttribute("Ordergoods", orderserviceimpl.getordergoods(merchant_id));
+		if (orderServiceImpl.getMerchantId(merchant_id) != null)
+			model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_id));
+		model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_id));
 		return "/order/orderresult";
 	}
 
@@ -227,7 +222,7 @@ public class MallController {
 		if (status != null && !status.equals("paid")) // 가상계좌에 입금했거나 결제 완료
 			return;
 		int webhookflag = 0;
-		Order order = orderserviceimpl.getMerchantId(merchant_uid);
+		Order order = orderServiceImpl.getMerchantId(merchant_uid);
 		if (!order.getPaymethod().equals("vbank")) {
 			webhookflag = 0;
 			logger.info("아임포트 서버 요청 stopping.");
@@ -301,7 +296,7 @@ public class MallController {
 						if (bepaid <= Integer.valueOf(amount) && vbanknum != null) {
 							switch (mystatus) {
 							case "paid": // 무통장 입금만 해당...
-								orderserviceimpl.updatestatuswebhook(vbankorder, vbank); // 결제 완료로 바꾸기
+								orderServiceImpl.updateStatusWebhook(vbankorder, vbank); // 결제 완료로 바꾸기
 							}
 						}
 					}
@@ -322,7 +317,7 @@ public class MallController {
 		logger.info("referer : {}", referer);						// 				      정확한 주문이 DB에 저장이 안될수 있기 때문에 사전에 차단하기 위함
 		try {
 			JSONObject json = new JSONObject();
-			orderserviceimpl.insertprice(amount, merchant_uid);
+			orderServiceImpl.insertPrice(amount, merchant_uid);
 			String imp_key = URLEncoder.encode("2645427372556228", "UTF-8");
 			String imp_secret = URLEncoder.encode(
 					"75USkRpzuQ8T8WeQcJrO1GFKEERYRDAYIuR2lgCQ6LKfHY5THxIJenuS2mRTZsSHWJKiZm967TlPRrJz", "UTF-8");
@@ -405,29 +400,29 @@ public class MallController {
 							vbankorder.setPrice(Integer.valueOf(getamount));
 							vbankorder.setCouponid(coupon);
 
-							if (orderserviceimpl.mobilecheckbymerchantuid(merchant_uid)) {
+							if (orderServiceImpl.mobileCheckByMerchantUid(merchant_uid)) {
 								model.addAttribute("vbank_date", vbank_date);
 								model.addAttribute("vbank_holder", vbank_holder); // 구매자
 								model.addAttribute("vbank_num",
-										orderserviceimpl.getvbankinfo(merchant_uid).getVbanknum()); // 은행 계좌번호
+										orderServiceImpl.getVbankInfo(merchant_uid).getVbanknum()); // 은행 계좌번호
 								model.addAttribute("vbank_name", vbank_name); // 은행 이름
 								model.addAttribute("vbank_code", vbank_code);
-								model.addAttribute("Order", orderserviceimpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderserviceimpl.getordergoods(merchant_uid));
+								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
+								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
 								model.addAttribute("method", "mobile");
 								return "/order/orderresult";
 							}
-							int vbankinsertcheck = orderserviceimpl.InsertVbankAndUpdateStatus(vbankorder, vbank,
+							int vbankinsertcheck = orderServiceImpl.InsertVbankAndUpdateStatus(vbankorder, vbank,
 									booknamelist, bookqtylist);
 							if (vbankinsertcheck == 1) {
 								model.addAttribute("vbank_date", vbank_date);
 								model.addAttribute("vbank_holder", vbank_holder); // 구매자
 								model.addAttribute("vbank_num",
-										orderserviceimpl.getvbankinfo(merchant_uid).getVbanknum()); // 은행 계좌번호
+										orderServiceImpl.getVbankInfo(merchant_uid).getVbanknum()); // 은행 계좌번호
 								model.addAttribute("vbank_name", vbank_name); // 은행 이름
 								model.addAttribute("vbank_code", vbank_code);
-								model.addAttribute("Order", orderserviceimpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderserviceimpl.getordergoods(merchant_uid));
+								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
+								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
 								model.addAttribute("method", "mobile");
 								return "/order/orderresult";
 							} else {
@@ -443,16 +438,16 @@ public class MallController {
 							order.setPrice(Integer.valueOf(getamount));
 							order.setCouponid(coupon);
 
-							if (orderserviceimpl.mobilecheckbymerchantuid(merchant_uid)) {
-								model.addAttribute("Order", orderserviceimpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderserviceimpl.getordergoods(merchant_uid));
+							if (orderServiceImpl.mobileCheckByMerchantUid(merchant_uid)) {
+								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
+								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
 								model.addAttribute("method", "mobile");
 								return "/order/orderresult";
 							}
-							int paidcheck = orderserviceimpl.updatestatusandorder(order, booknamelist, bookqtylist);
+							int paidcheck = orderServiceImpl.updateStatusAndOrder(order, booknamelist, bookqtylist);
 							if (paidcheck == 1) {
-								model.addAttribute("Order", orderserviceimpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderserviceimpl.getordergoods(merchant_uid));
+								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
+								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
 								model.addAttribute("method", "mobile");
 								return "/order/orderresult";
 							} else {
@@ -460,7 +455,7 @@ public class MallController {
 							}
 						case "failed":
 							logger.info("mystatus : failed");
-							orderserviceimpl.deletemerchantid((String) getdata.get("merchant_uid"));
+							orderServiceImpl.deleteMerchantId((String) getdata.get("merchant_uid"));
 							return "redirect:/showbasket";
 						}
 					} else {
@@ -488,13 +483,13 @@ public class MallController {
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
 		pagingRefactoringForOrder(curPageNum, request, model, id);	// 고객의 주문 내역을 보는 페이지가 속한 Block의 첫번째 숫자와 마지막 숫자를 모델의 속성값을 넣음 -> 페이징 처리
 		logger.info("{}가 주문 내역 페이지를 확인",id);
-		List<Order> orders = orderserviceimpl.getorderinfo(id, curPageNum); // ordertable의 주문 데이터들
+		List<Order> orders = orderServiceImpl.getOrderInfo(id, curPageNum); // ordertable의 주문 데이터들
 		model.addAttribute("orders", orders);
 		List<List<Ordergoods>> ordergoods = new ArrayList<List<Ordergoods>>();
 		List<Vbank> vbanks = new ArrayList<Vbank>();
 		for (int i = 0; i < orders.size(); i++) {
-			ordergoods.add(orderserviceimpl.getordergoods(orders.get(i).getMerchant_id())); // 주문 번호로 시킨 책들
-			vbanks.add(orderserviceimpl.getvbankinfo(orders.get(i).getMerchant_id()));
+			ordergoods.add(orderServiceImpl.getOrderGoods(orders.get(i).getMerchant_id())); // 주문 번호로 시킨 책들
+			vbanks.add(orderServiceImpl.getVbankInfo(orders.get(i).getMerchant_id()));
 			logger.info("vbanks : {}", vbanks);
 			logger.info("orders.get(i).getMerchant_id() : {}", orders.get(i).getMerchant_id());
 		}
@@ -534,7 +529,7 @@ public class MallController {
 
 	@RequestMapping(value = "/updatediscountpercent", method = RequestMethod.POST)
 	public void updatediscountpercent(@RequestParam String couponId, @RequestParam String merchant_id) {
-		couponserviceimpl.updatediscountpercent(couponId, merchant_id);
+		couponServiceImpl.updateDiscountPercent(couponId, merchant_id);
 	}
 
 	@RequestMapping("/showcoupon") // 쿠폰 내역 조회
@@ -619,7 +614,7 @@ public class MallController {
 		List<Reply> list = paging.reply(curPageNum, bookname);
 		logger.info("list : {}", list);
 		model.addAttribute("list", list);
-		model.addAttribute("reviewlist", replyserviceimpl.getAllReply(bookname));
+		model.addAttribute("reviewlist", replyServiceImpl.getAllReply(bookname));
 		return model;
 	}
 
@@ -642,7 +637,7 @@ public class MallController {
 		List<Reply> list = paging.replylatest(curPageNum, bookname);
 		logger.info("list : {}", list);
 		model.addAttribute("list", list);
-		model.addAttribute("reviewlist", replyserviceimpl.getAllReply(bookname));
+		model.addAttribute("reviewlist", replyServiceImpl.getAllReply(bookname));
 		return model;
 	}
 

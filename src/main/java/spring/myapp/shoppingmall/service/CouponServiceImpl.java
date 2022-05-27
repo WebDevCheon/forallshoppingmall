@@ -1,10 +1,8 @@
 package spring.myapp.shoppingmall.service;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.dto.Coupon;
 
@@ -14,42 +12,42 @@ public class CouponServiceImpl implements CouponService{
 	private MallDao Malldao;
 	
 	@Override
-	public void updateusecouponservice(String yes,String cnumber){
+	public void updateUseCouponService(String yes,String cnumber){
 		Malldao.updateusecouponservice(yes,cnumber);
 	}
 	
 	@Override
-	public Integer usecoupon(String cnumber){
+	public Integer useCoupon(String cnumber){
 		return Malldao.usecoupon(cnumber);
 	}
 	
 	@Override
-	public Integer receivecoupon(String Id){
+	public Integer receiveCoupon(String Id){
 		return Malldao.receivecoupon(Id);
 	}
 	
 	@Override
-	public List<Coupon> getcouponsbyId(String id) {
+	public List<Coupon> getCouponsById(String id) {
 		return Malldao.getcoupons(id);
 	}
 	
 	@Override
-	public void updatediscountpercent(String couponId,String merchant_id){
+	public void updateDiscountPercent(String couponId,String merchant_id){
 		Malldao.updatediscountpercent(couponId,merchant_id);
 	}
 	
 	@Override
-	public int usedcouponcheckmethod(String couponid) {
+	public int usedCouponCheckMethod(String couponid) {
 		return Malldao.usedcouponcheckmethod(couponid);
 	}
 	
 	@Override
-	public int getcouponscountbyuserId(String id) {
+	public int getCouponsCountByUserId(String id) {
 		return Malldao.getcouponscountbyuserId(id);
 	}
 	
 	@Override
-	public List<Coupon> canreceive(String id) {
+	public List<Coupon> canReceive(String id) {
 		return Malldao.canreceive(id);
 	}
 }

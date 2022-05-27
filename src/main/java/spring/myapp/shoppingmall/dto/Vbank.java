@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "vbank")
-public class Vbank {
+public class Vbank { 
 	@Id
 	private String merchant_id;
 	@OneToOne

@@ -1,12 +1,10 @@
 package spring.myapp.shoppingmall.service;
 
 import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-
 import spring.myapp.shoppingmall.dao.UserDao;
 import spring.myapp.shoppingmall.dto.User;
 
@@ -29,7 +27,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public void joinuser(User user) {
+	public void joinUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		Userdao.join(user);
 	}
@@ -67,23 +65,23 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	public User finduserbyid(String id) {
+	public User findUserById(String id) {
 		User user = Userdao.getUser(id);
 		return user;
 	}
 	
 	@Override
-	public void authorizingemailconfirm(String email) {
+	public void authorizingEmailConfirm(String email) {
 		Userdao.authorizingemailconfirm(email);
 	}
 
 	@Override
-	public boolean checkalreadyexistemail(String email) {
+	public boolean checkAlreadyExistEmail(String email) {
 		return Userdao.checkalreadyexistemail(email);
 	}
 	
 	@Override
-	public void joinnaveruser(User naveruser) {
+	public void joinNaverUser(User naveruser) {
 		Userdao.joinnaveruser(naveruser);
 	}
 }

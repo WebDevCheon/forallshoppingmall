@@ -42,32 +42,32 @@ public class ShoppingmallRestContoller {
 	private static final Logger logger = LoggerFactory.getLogger(ShoppingmallRestContoller.class);
 	
 	@Autowired
-	private ShoppingBasketImpl shoppingbasketimpl;
+	private ShoppingBasketImpl shoppingBasketImpl;
 	
 	@Autowired
-	private UserServiceImpl userserviceimpl;
+	private UserServiceImpl userServiceImpl;
 	
 	@Autowired
-	private ProductServiceImpl productserviceimpl; 
+	private ProductServiceImpl productServiceImpl; 
 	
 	@Autowired
-	private OrderServiceImpl orderserviceimpl;
+	private OrderServiceImpl orderServiceImpl;
 	
 	@Autowired
-	private AwsServiceImpl awsserviceimpl;
+	private AwsServiceImpl awsServiceImpl;
 	
 	@Autowired
-	private CouponServiceImpl couponserviceimpl;
+	private CouponServiceImpl couponServiceImpl;
 	
 	@Autowired
-	private ReplyServiceImpl replyserviceimpl;
+	private ReplyServiceImpl replyServiceImpl;
 	
 	@PostMapping(value = "/cart")	// 책 한권의 상세보기 창에서 주문하기 또는 장바구니 버튼을 눌렀을때,DB에 그 책의 이름과 수량을 카트에 Insert
 	public void cart(Shoppingbasket cart,@RequestParam String userid,@RequestParam int goods_id){
 		logger.info("{}",userid);
 		logger.info("카트로 담은 책의 이름,카트로 담은 책의 수량 : {},{}",cart.getName(),cart.getQty());
 		logger.info("책의 가격 : {}",cart.getPrice());
-		shoppingbasketimpl.setshoppingbasket(cart.getQty(),goods_id,cart.getPrice(),userid,cart.getName());  //카트 담기
+		shoppingBasketImpl.setShoppingBasket(cart.getQty(),goods_id,cart.getPrice(),userid,cart.getName());  //카트 담기
 	}
 	
 	@RequestMapping(value = "/shoppingbasket",method = RequestMethod.POST)	// 책의 아이디,책의 개수를 DB의 사용자 아이디의 장바구니에 Insert -> /cart와 차이는 JSON으로 데이터를 받느냐 안받느냐의 차이
@@ -85,14 +85,14 @@ public class ShoppingmallRestContoller {
 		   logger.info("책의 이름 : {},유저의 이름 : {}",goods_id,UserId);
 		   logger.info("책의 이름 - 책의 수량 : {},{}",name,qty);
 		   logger.info("책의 가격 : {}",price);
-		   shoppingbasketimpl.setshoppingbasket(qty, goods_id,price,UserId,name);  //카트 담기
+		   shoppingBasketImpl.setShoppingBasket(qty, goods_id,price,UserId,name);  //카트 담기
 		   return new ResponseEntity<String>("yes",HttpStatus.CREATED);
 	}
 	
 	@PostMapping("/cartspace")	// 장바구니의 허용 개수 확인
 	public ResponseEntity<Integer> cartspace(@RequestBody HashMap<String,Object> map) {  //유저의 아이디 Serialization
 		String Id = (String)(map.get("Id"));
-		int cartspace = shoppingbasketimpl.checkcartspace(Id);  //카트를 담을 수 있는 공간 확인
+		int cartspace = shoppingBasketImpl.checkCartSpace(Id);  //카트를 담을 수 있는 공간 확인
 		return new ResponseEntity<Integer>(cartspace,HttpStatus.OK);
 	}
 	
@@ -101,7 +101,7 @@ public class ShoppingmallRestContoller {
 		String Id = (String)(map.get("Id"));
 		logger.info("유저의 아이디 : {}",Id);
 		JSONObject data = new JSONObject();
-		User user = userserviceimpl.finduserbyid(Id);  //유저 객체 찾기
+		User user = userServiceImpl.findUserById(Id);  //유저 객체 찾기
 		if(user == null) {
 			throw new UserNotFindExceptionHandler(Id); // 유저가 없다면 에러 발생
 		}
@@ -118,12 +118,12 @@ public class ShoppingmallRestContoller {
 		List<Integer> bookqtylist = (ArrayList<Integer>)(map.get("bookqtylist"));
 		logger.info("booknamelist : {}",booknamelist);
 		String merchant_id = (String)map.get("merchant_uid");
-		return orderserviceimpl.unitInStockCheck(booknamelist,bookqtylist,merchant_id); 
+		return orderServiceImpl.unitInStockCheck(booknamelist,bookqtylist,merchant_id); 
 	}
 	
 	@PostMapping("/InsertMerchantId")	// 결제창을 눌렀을때 미리 DB에 주문에 대하여 DB 정보를 삽입함,주문 취소되면 삭제됨
 	public ResponseEntity<String> InsertMerchantId(HttpSession session,@RequestBody HashMap<String,Object> map){
-		if(orderserviceimpl.orderpaycheck((String)session.getAttribute("Userid"),(String)map.get("price"),
+		if(orderServiceImpl.orderPayCheck((String)session.getAttribute("Userid"),(String)map.get("price"),
 				(String)map.get("coupon")) == 1) {  //결제할 돈의 액수를 클라이언트에서 수정한 경우 체크
 			return new ResponseEntity<String>("formupdated",HttpStatus.OK);
 		}
@@ -134,19 +134,19 @@ public class ShoppingmallRestContoller {
 		String buyer_name = (String)map.get("buyer_name");
 		String memo = (String)map.get("memo");
 		String price = (String)map.get("price");
-		orderserviceimpl.InsertMerchant(Userid,merchant_id,phoneNumber,address,buyer_name,memo,Integer.valueOf(price)); 
+		orderServiceImpl.InsertMerchant(Userid,merchant_id,phoneNumber,address,buyer_name,memo,Integer.valueOf(price)); 
 		return new ResponseEntity<String>(merchant_id,HttpStatus.OK);
 	}
 	
 	@PostMapping("/deleteshoppingcart")		// 유저의 장바구니에서 특정 책만 삭제
 	public int deleteshoppingcart(int pnum) {
-		shoppingbasketimpl.deleteshoppingbasket(pnum);
+		shoppingBasketImpl.deleteShoppingBasket(pnum);
 		return pnum;
 	}
 	
 	@PostMapping("/deleteallshoppingcart")	// 유저의 장바구니 모두 삭제
 	public void deleteallshoppingmall(@RequestParam String Id){
-		shoppingbasketimpl.deleteall(Id);
+		shoppingBasketImpl.deleteAll(Id);
 	}
 	
 	@PostMapping(value = "/upload",produces = "text/plain;charset=utf-8")		// 파일 업로드 기능
@@ -165,8 +165,9 @@ public class ShoppingmallRestContoller {
 			fos.close();
 			logger.info("bookimagefile str_filename : {}",str_filename);
 			File multitofile = convertFromMultipartToFile(str_filename,"book");
-			//awsserviceimpl.s3FileUpload(multitofile,"book");  //관리자가 등록할 책 이미지 aws s3에 업로드
+			//awsServiceImpl.s3FileUpload(multitofile,"book");  //관리자가 등록할 책 이미지 aws s3에 업로드
 			//json.put("url","https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/bookimage/" + str_filename);
+			json.put("url","https://localhost:8443/shoppingmall/goodsimgUpload/" + str_filename);
 			return json.toString();
 		} else {  //리뷰 댓글 이미지인 경우
 			try {
@@ -177,7 +178,7 @@ public class ShoppingmallRestContoller {
 				fos.close();
 				logger.info("reivewimage str_filename : {}",str_filename);
 				File multitofile = convertFromMultipartToFile(str_filename,"review");
-				//awsserviceimpl.s3FileUpload(multitofile,"review");  //리뷰 댓글에 파일 업로드 이미지 aws s3에 업로드
+				//awsServiceImpl.s3FileUpload(multitofile,"review");  //리뷰 댓글에 파일 업로드 이미지 aws s3에 업로드
 				//json.put("url","https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/reviewimage/" + str_filename);
 				json.put("url","https://localhost:8443/shoppingmall/reviewUpload/" + str_filename);
 				return json.toString();
@@ -205,7 +206,7 @@ public class ShoppingmallRestContoller {
 	
 	@PostMapping("/usecoupon")		// 쿠폰을 적용하여 할인 적용
 	public Integer usecoupon(@RequestParam String cnumber){
-		Integer data = couponserviceimpl.usecoupon(cnumber);
+		Integer data = couponServiceImpl.useCoupon(cnumber);
 	    return data;
 	}
 	
@@ -214,12 +215,12 @@ public class ShoppingmallRestContoller {
 		if(!session.getAttribute("Userid").equals(Id))
 			return 3;
 		else
-			return couponserviceimpl.receivecoupon(Id);
+			return couponServiceImpl.receiveCoupon(Id);
 	}
 	 
 	@PostMapping("/usedcouponcheck")  //사용된 쿠폰인지 체크
 	public int usedcouponcheck(@RequestParam String cnumber){
-		return couponserviceimpl.usedcouponcheckmethod(cnumber);
+		return couponServiceImpl.usedCouponCheckMethod(cnumber);
 	}
 	
 	@PostMapping("/productrecommend")  //책 추천하기
@@ -228,7 +229,7 @@ public class ShoppingmallRestContoller {
 		logger.info("recommend bookid : {}",bookrecommend.getBook_id());
 		logger.info("int bookid : {}",bookid);
 		bookrecommend.setUserid(userid);
-		return productserviceimpl.bookrecommend(bookrecommend,userid,bookid);
+		return productServiceImpl.bookRecommend(bookrecommend,userid,bookid);
 	}
 	
 	@PostMapping(value = "/addreview",produces = "application/text; charset=utf8")	// 특정 책의 리뷰 남기기
@@ -248,7 +249,7 @@ public class ShoppingmallRestContoller {
 		userreview.setImgfileurl(reviewimgurl);
 		userreview.setGid(bookname);
 		userreview.setTag(tag);
-		if(replyserviceimpl.addreview(userreview)) {
+		if(replyServiceImpl.addReview(userreview)) {
 			return "리뷰 업로드 성공";
 		} else {
 			return "리뷰 업로드 실패";
@@ -266,57 +267,57 @@ public class ShoppingmallRestContoller {
 		userreview.setUser_id(user_id);
 		userreview.setBookname(bookname);
 		userreview.setContent(reviewContent);
-		replyserviceimpl.addreviewreply(userreview,rid);  //리뷰에 대한 답변 달기
+		replyServiceImpl.addReviewReply(userreview,rid);  //리뷰에 대한 답변 달기
 	}
 	
 	@PostMapping(value = "/reviewmodify",produces = "application/text; charset=utf8")		// 리뷰 수정
 	public String reviewmodify(@RequestParam String content,@RequestParam int reviewid) {
 		String modifycontent = content;
-		replyserviceimpl.reviewmodify(content,reviewid);
+		replyServiceImpl.reviewModify(content,reviewid);
 		return modifycontent;
 	}
 	
 	@PostMapping(value = "/reviewdelete")		// 리뷰 삭제
 	public void reviewdelete(@RequestParam int reviewid,HttpServletRequest request,HttpServletResponse response){
-		String[] arr = replyserviceimpl.getreviewbyrid(reviewid).getImgfileurl().split("/");
-		logger.info("{}",(replyserviceimpl.getreviewbyrid(reviewid).getImgfileurl().split("/"))[arr.length-1]);
-		awsserviceimpl.s3FileDelete((replyserviceimpl.getreviewbyrid(reviewid).getImgfileurl().split("/"))[arr.length-1]);
-		File file = new File("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\reviewUpload\\" + (replyserviceimpl.getreviewbyrid(reviewid).getImgfileurl().split("/"))[arr.length-1]);
-		//File file = new File("/opt/tomcat/webapps/ROOT/reviewupload/" + (replyserviceimpl.getreviewbyrid(reviewid).getImgfileurl().split("/"))[arr.length-1]);
+		String[] arr = replyServiceImpl.getReviewByReviewId(reviewid).getImgfileurl().split("/");
+		logger.info("{}",(replyServiceImpl.getReviewByReviewId(reviewid).getImgfileurl().split("/"))[arr.length-1]);
+		awsServiceImpl.s3FileDelete((replyServiceImpl.getReviewByReviewId(reviewid).getImgfileurl().split("/"))[arr.length-1]);
+		File file = new File("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\reviewUpload\\" + (replyServiceImpl.getReviewByReviewId(reviewid).getImgfileurl().split("/"))[arr.length-1]);
+		//File file = new File("/opt/tomcat/webapps/ROOT/reviewupload/" + (replyServiceImpl.getreviewbyrid(reviewid).getImgfileurl().split("/"))[arr.length-1]);
 		if(file.delete())
 			logger.info("reviewupload file 삭제");
 		else
 			logger.info("reviewupload file 파일 삭제 실패");
-		replyserviceimpl.reviewdelete(reviewid);
+		replyServiceImpl.reviewDelete(reviewid);
 	}
 	
 	@PostMapping("/reviewreplydelete")		// 리뷰에 대한 커멘트 삭제
 	public void reviewreplydelete(@RequestParam int reviewreplyid,HttpServletRequest request,HttpServletResponse response) {
-		replyserviceimpl.reviewreplydelete(reviewreplyid);
+		replyServiceImpl.reviewReplyDelete(reviewreplyid);
 	}
 	
 	@PostMapping("/reviewrecommend")		// 리뷰 추천
 	public void reviewrecommend(@RequestParam int reviewid,@RequestParam String userid) {
-		replyserviceimpl.reviewrecommend(reviewid,userid);
+		replyServiceImpl.reviewRecommend(reviewid,userid);
 	}
 	
 	@PostMapping("/reviewreplyrecommend")	// 리뷰에 대한 커멘트 추천
 	public void reviewreplyrecommend(@RequestParam int reviewreplyid,@RequestParam String userid) {
-		replyserviceimpl.reviewreplyrecommend(reviewreplyid,userid);
+		replyServiceImpl.reviewReplyRecommend(reviewreplyid,userid);
 	}
 
 	@PostMapping("/reviewrecommendcheck")	// 리뷰를 전에 추천한 적이 있는지 체크
 	public boolean reviewrecommendcheck(@RequestParam int reviewid,@RequestParam String userid) {
-		return replyserviceimpl.reviewrecommendcheck(reviewid,userid);
+		return replyServiceImpl.reviewRecommendCheck(reviewid,userid);
 	}
 	
 	@PostMapping("/reviewreplyrecommendcheck")	// 리뷰에 대한 커멘트를 추천한 적이 있는지 체크
 	public boolean reviewreplyrecommendcheck(@RequestParam int reviewreplyid,@RequestParam String userid) {
-		return replyserviceimpl.reviewreplyrecommendcheck(reviewreplyid,userid);
+		return replyServiceImpl.reviewReplyRecommendCheck(reviewreplyid,userid);
 	}
 	
 	@GetMapping("/pastreviewcheck")		// 책에 대한 리뷰를 단 적이 있는지 체크
 	public int pastreviewcheck(HttpSession session,@RequestParam String bookname) {
-		return replyserviceimpl.pastreviewcheck((String)(session.getAttribute("Userid")),bookname);
+		return replyServiceImpl.pastReviewCheck((String)(session.getAttribute("Userid")),bookname);
 	}
 }

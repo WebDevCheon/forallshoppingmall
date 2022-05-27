@@ -34,10 +34,10 @@ public class PaymentAndRefundController {
 	private static final Logger logger = LoggerFactory.getLogger(PaymentAndRefundController.class);
 	
 	@Autowired
-	private OrderServiceImpl orderserviceimpl;
+	private OrderServiceImpl orderServiceImpl;
 	
 	@Autowired
-	private AdminServiceImpl adminserviceimpl;
+	private AdminServiceImpl adminServiceImpl;
 	
 	@PostMapping("/completeToken")  // 결제 이후에 IMPORT서버로부터 온 결제 정보를 쇼핑몰 서버의 MySQL DB에 주문 정보를 동기화 과정
 	public ResponseEntity<JSONObject> synchronizationOrderTable(@RequestBody HashMap<String,Object> map,HttpSession session) throws Exception{
@@ -163,11 +163,11 @@ public class PaymentAndRefundController {
 				vbankorder.setPrice(Integer.valueOf(price));
 				vbankorder.setCouponid(couponid);
 				
-				int vbankinsertcheck = orderserviceimpl.InsertVbankAndUpdateStatus(vbankorder,vbank,list,bookqtylist);
+				int vbankinsertcheck = orderServiceImpl.InsertVbankAndUpdateStatus(vbankorder,vbank,list,bookqtylist);
 				if(vbankinsertcheck == 1) {	
 					resjson.put("check","vbankIssued");
 					resjson.put("data",getdata);
-					resjson.put("vbanknum",orderserviceimpl.getvbankinfo(merchant_uid).getVbanknum());
+					resjson.put("vbanknum",orderServiceImpl.getVbankInfo(merchant_uid).getVbanknum());
 					logger.info("무통장 입금 완료");
 				} else {
 					resjson.put("check","failed");
@@ -185,7 +185,7 @@ public class PaymentAndRefundController {
 				order.setCouponid(couponid);
 				
 				logger.info("쿠폰 아이디 - 무통장 입금 이외 결제 수단 : {}",couponid);
-				int paidcheck = orderserviceimpl.updatestatusandorder(order,list,bookqtylist);
+				int paidcheck = orderServiceImpl.updateStatusAndOrder(order,list,bookqtylist);
 				if(paidcheck == 1) {
 					resjson.put("check","success");
 					resjson.put("data",getdata);
@@ -208,13 +208,13 @@ public class PaymentAndRefundController {
 	}
 	
 	private int getamount(String merchant_uid){		// 주문의 가격
-		return orderserviceimpl.getpriceBymerchantid(merchant_uid);
+		return orderServiceImpl.getPriceByMerchantId(merchant_uid);
 	}
 	
 	@PostMapping("/stop")		// 결제 도중 에러가 발생하면 DB의 주문 정보를 삭제	
 	public void stopPayment(@RequestBody HashMap<String,Object> map){
 		String merchant_id = (String)map.get("merchant_id");
-		orderserviceimpl.deletemerchantid(merchant_id);
+		orderServiceImpl.deleteMerchantId(merchant_id);
 	}
 	
 	@PostMapping("/cancel")		// 환불 메소드
@@ -238,10 +238,10 @@ public class PaymentAndRefundController {
 		}
 		logger.info("merchant_uid typecheck : {}",((String)map.get("merchant_uid")).getClass().getName());
 		logger.info("amount typecheck : {}",((String)map.get("cancel_request_amount")).getClass().getName());
-		int amount = Integer.valueOf(orderserviceimpl.getpriceBymerchantid((String)map.get("merchant_uid")));		
+		int amount = Integer.valueOf(orderServiceImpl.getPriceByMerchantId((String)map.get("merchant_uid")));		
 		int cancel_request_amount = Integer.valueOf((String)map.get("cancel_request_amount")); //Integer.valueOf((String)map.get("cancel_request_amount"));				
 		if((String)map.get("refund_holder") != null){  //환불할 결제 수단이 무통장 입금인 경우
-			String imp_uid = orderserviceimpl.getimp_uid((String)(map.get("merchant_uid")));
+			String imp_uid = orderServiceImpl.getImp_Uid((String)(map.get("merchant_uid")));
 			obj.put("imp_uid",imp_uid);
 			obj.put("merchant_uid",(String)(map.get("merchant_uid")));
 			//obj.put("cancel_request_amount",(String)map.get("cancel_request_amount"));  (optional)
@@ -251,11 +251,11 @@ public class PaymentAndRefundController {
 			logger.info("환불할 json 객체 : {}",obj);
 		}
 		else{  //환불한 수단이 무통장 입금 이외인 경우
-			obj.put("imp_uid",orderserviceimpl.getimp_uid((String)(map.get("merchant_uid"))));
+			obj.put("imp_uid",orderServiceImpl.getImp_Uid((String)(map.get("merchant_uid"))));
 			//obj.put("cancel_request_amount",(String)map.get("cancel_request_amount"));  (optional)
 			logger.info("환불 json 객체 : {}",obj);
 		}
-		adminserviceimpl.purchasecancel(map);
+		adminServiceImpl.purchaseCancel(map);
 		JSONObject getcanceldata = null;		//아임포트 서버에서 받아올 환불 이후의 json 객체
 		try{
 			String requestString = "";
@@ -305,6 +305,6 @@ public class PaymentAndRefundController {
 		String merchant_id = (String)map.get("merchant_id");
 		String cancel = (String)map.get("cancel");
 		logger.info("merchant_id : {},cancel : {}",merchant_id,cancel);
-		adminserviceimpl.updatestatuscancel(merchant_id, cancel);
+		adminServiceImpl.updateStatusCancel(merchant_id, cancel);
 	}
 }

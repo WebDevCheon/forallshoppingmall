@@ -3,7 +3,6 @@ package spring.myapp.shoppingmall.dto;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,11 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.CreationTimestamp;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -43,7 +39,7 @@ public class Reply {
 	private int bgroup;  //답변의 그룹
 	private int tag;
 	private int good;
-	@OneToMany(mappedBy = "rid",cascade = CascadeType.REMOVE)   //@OneToMany(mappedBy = "reviewid",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "rid",cascade = CascadeType.REMOVE)
 	private List<ReviewReply> reviewreplylist = new ArrayList<ReviewReply>();
 	@OneToMany(mappedBy = "reviewid",cascade = CascadeType.REMOVE)
 	private List<ReviewRecommend> reviewrecommend;

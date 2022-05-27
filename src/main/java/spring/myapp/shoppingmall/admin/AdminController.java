@@ -1,13 +1,10 @@
 package spring.myapp.shoppingmall.admin;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
 import spring.myapp.shoppingmall.dto.Refund;
 import spring.myapp.shoppingmall.paging.Paging;
@@ -34,7 +29,7 @@ public class AdminController {
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
 	@Autowired
-	private AdminServiceImpl adminserviceimpl;
+	private AdminServiceImpl adminServiceImpl;
 
 	@Autowired
 	private Paging paging;
@@ -95,7 +90,7 @@ public class AdminController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		adminserviceimpl.register(goods);
+		adminServiceImpl.register(goods);
 		return "redirect:/admin/registerForm";
 	}
 
@@ -108,14 +103,14 @@ public class AdminController {
 	@RequestMapping("/downmonthbooklist")
 	@ResponseBody
 	public void downmonthbooklist() {
-		adminserviceimpl.downmonthbooklist();
+		adminServiceImpl.downMonthBookList();
 	}
 
 	@RequestMapping(value = "/findbook", method = RequestMethod.POST)
 	@ResponseBody
 	public JSONObject findbook(@RequestParam String name) {
 		logger.info("name : " + name);
-		Goods goods = adminserviceimpl.findbook(name);
+		Goods goods = adminServiceImpl.findBook(name);
 		JSONObject json = new JSONObject();
 		json.put("id", goods.getId());
 		json.put("name", goods.getName());
@@ -130,7 +125,7 @@ public class AdminController {
 	@ResponseBody
 	public void settodaybookselect(@RequestParam String id) {
 		int bookid = Integer.valueOf(id);
-		adminserviceimpl.settodaybookselect(bookid);
+		adminServiceImpl.setTodayBookSelect(bookid);
 	}
 
 	private Model pagingModelAdmin(Model model, HttpServletRequest request) { 	// 이달의 인기서적 등록 페이지(관리자 페이지)에서 관리자가 구매량의 순으로 책을
@@ -138,7 +133,7 @@ public class AdminController {
 		int curPageNum = 0;
 		curPageNum = pagingRefactoringForAdmin(curPageNum, request, model);
 		logger.info("curPageNum Model Admin : " + curPageNum);
-		List<Goods> monthbooklist = adminserviceimpl.getmonthbooklist(curPageNum);
+		List<Goods> monthbooklist = adminServiceImpl.getMonthBookList(curPageNum);
 		logger.info("monthbooklist : " + monthbooklist);
 		model.addAttribute("list", monthbooklist);
 		return model;
@@ -161,7 +156,7 @@ public class AdminController {
 		List<String> selectedbooklist = (ArrayList<String>) map.get("selectedbooklist");
 		for (int i = 0; i < selectedbooklist.size(); i++)
 			logger.info("{}", Integer.parseInt(selectedbooklist.get(i)));
-		adminserviceimpl.setmonthbooklist(selectedbooklist);
+		adminServiceImpl.setMonthBookList(selectedbooklist);
 	}
 
 	@RequestMapping("/todaybookselect")
@@ -215,7 +210,7 @@ public class AdminController {
 	@ResponseBody
 	public JSONObject findrefund(@RequestBody HashMap<String, Object> map) {
 		logger.info((String) map.get("orderid"));
-		Refund refund = adminserviceimpl.getrefund((String) map.get("orderid")); // 고객의 환불 데이터를 가져옴
+		Refund refund = adminServiceImpl.getRefund((String) map.get("orderid")); // 고객의 환불 데이터를 가져옴
 		if (refund != null) {
 			Integer amount = refund.getAmount();
 			String refundholder = refund.getRefundholder();

@@ -1,7 +1,6 @@
 package spring.myapp.shoppingmall.messageconverter;
 
 import java.nio.charset.StandardCharsets;
-
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Configuration
-public class MessageConverterContext
-{
+public class MessageConverterContext {
 	@Autowired
 	private RequestMappingHandlerAdapter adapter;
 

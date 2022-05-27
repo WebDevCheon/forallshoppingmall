@@ -2,13 +2,11 @@ package spring.myapp.shoppingmall.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import spring.myapp.shoppingmall.dto.User;
 
-public class UserDetailsImpl implements UserDetails {
+public class UserDetailsImpl implements UserDetails { 
 
 	private User user;
 

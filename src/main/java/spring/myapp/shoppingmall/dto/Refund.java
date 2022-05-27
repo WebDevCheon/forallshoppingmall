@@ -21,7 +21,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "requestrefund")
-public class Refund {
+public class Refund { 
 	@Id
 	private String merchant_id;
 	private int amount;

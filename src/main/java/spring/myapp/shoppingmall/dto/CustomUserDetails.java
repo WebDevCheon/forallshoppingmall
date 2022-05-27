@@ -1,11 +1,10 @@
 package spring.myapp.shoppingmall.dto;
 
 import java.util.Collection;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class CustomUserDetails implements UserDetails{
+public class CustomUserDetails implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	private String id;					
 	private String pw;	

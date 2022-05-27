@@ -3,7 +3,6 @@ package spring.myapp.shoppingmall.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
 import spring.myapp.shoppingmall.dao.UserDao;
 import spring.myapp.shoppingmall.dto.User;
 

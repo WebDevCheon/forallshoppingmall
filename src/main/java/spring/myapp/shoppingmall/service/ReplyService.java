@@ -1,25 +1,24 @@
 package spring.myapp.shoppingmall.service;
 
 import java.util.List;
-
 import spring.myapp.shoppingmall.dto.Reply;
 import spring.myapp.shoppingmall.dto.ReviewReply;
 
 public interface ReplyService {
-	public List<Reply> commentlist(String gId);
-	public void contentreplydelete(String gId, String rId);
-	public void contentreplymodify(String gId, String rId, String content);
-	public boolean addComment(String gId,String user_id,String reply);
-	public boolean addreview(Reply reply); 
-	public List<Reply> getAllReply(String bookname);
-	public void addreviewreply(ReviewReply userreview,int rid);
-	public void reviewmodify(String content, int reviewid);
-	public void reviewdelete(int reviewid);
-	public void reviewreplydelete(int reviewreplyid);
-	public void reviewrecommend(int reviewid,String userid);
-	public void reviewreplyrecommend(int reviewreplyid,String userid);
-	public boolean reviewrecommendcheck(int reviewid,String userid);
-	public boolean reviewreplyrecommendcheck(int reviewreplyid, String userid);
-	public Reply getreviewbyrid(int reviewid);
-	public int pastreviewcheck(String Userid,String bookname);
+	public List<Reply> commentList(String goodsId);
+	public void contentReplyDelete(String goodsId, String reviewId);
+	public void contentReplyModify(String goodsId, String reviewId, String content);
+	public boolean addComment(String goodsId,String user_id,String reply);
+	public boolean addReview(Reply reply); 
+	public List<Reply> getAllReply(String bookName);
+	public void addReviewReply(ReviewReply userReview,int reviewId);
+	public void reviewModify(String content, int reviewId);
+	public void reviewDelete(int reviewId);
+	public void reviewReplyDelete(int reviewReplyId);
+	public void reviewRecommend(int reviewId,String userId);
+	public void reviewReplyRecommend(int reviewReplyId,String userId);
+	public boolean reviewRecommendCheck(int reviewId,String userId);
+	public boolean reviewReplyRecommendCheck(int reviewReplyId, String userId);
+	public Reply getReviewByReviewId(int reviewId);
+	public int pastReviewCheck(String userId,String bookName);
 }

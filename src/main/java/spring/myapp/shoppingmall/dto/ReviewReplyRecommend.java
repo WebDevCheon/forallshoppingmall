@@ -19,11 +19,11 @@ import lombok.ToString;
 @Entity
 @Table(name = "reviewreplyrecommend")
 public class ReviewReplyRecommend {
-		@Id
-		@GeneratedValue(strategy=GenerationType.IDENTITY)
-		private int reviewreplyrecommendid;
-		private String user_id;
-		@ManyToOne
-		@JoinColumn(name = "reviewreply_id")
-		private ReviewReply reviewreplyid;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int reviewreplyrecommendid;
+	private String user_id;
+	@ManyToOne
+	@JoinColumn(name = "reviewreply_id")
+	private ReviewReply reviewreplyid;
 }

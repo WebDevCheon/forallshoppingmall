@@ -11,8 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import spring.myapp.shoppingmall.service.UserDetailsImpl;
 import spring.myapp.shoppingmall.service.UserDetailsServiceImpl;
 
-public class LoginAuthenticationProvider implements AuthenticationProvider {  // UserDetail의 구현체인 UserDetails 객체를
-																			  // 가져와서 인증을 하여 권한을 줄지 말지 결정
+public class LoginAuthenticationProvider implements AuthenticationProvider {
+	// UserDetail의 구현체인 UserDetails 객체를 가져와서 인증을 하여 권한을 줄지 말지 결정
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
 	@Autowired

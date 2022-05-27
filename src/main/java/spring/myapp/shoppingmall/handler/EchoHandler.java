@@ -2,7 +2,6 @@ package spring.myapp.shoppingmall.handler;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,6 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import spring.myapp.shoppingmall.controller.MallController;
-import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.service.CouponServiceImpl;
 
 public class EchoHandler extends TextWebSocketHandler {		// 유저의 쿠폰 알람 기능
@@ -22,7 +18,7 @@ public class EchoHandler extends TextWebSocketHandler {		// 유저의 쿠폰 알람 기�
 	private Map<String,Integer> couponAlarmChecklist = new HashMap<>();
 	
 	@Autowired
-	private CouponServiceImpl couponserviceimpl;
+	private CouponServiceImpl couponServiceImpl;
 	
 	// 클라이언트와 연결 이후에 실행되는 메서드
 	@Override
@@ -57,11 +53,11 @@ public class EchoHandler extends TextWebSocketHandler {		// 유저의 쿠폰 알람 기�
 		String[] strs = message.getPayload().split(",");  //admin,makecoupon
 		if(strs.length == 1) {  
 			if(couponAlarmChecklist.get(userid) == 1) {  //쿠폰을 전에 확인 했을때
-				logger.info("strs.length == 1 첫번째 : " + couponserviceimpl.getcouponscountbyuserId(userid));
+				logger.info("strs.length == 1 첫번째 : " + couponServiceImpl.getCouponsCountByUserId(userid));
 				return;
 			} else {  //쿠폰을 아직 확인 안한 경우
-				int canreceivecouponcount = couponserviceimpl.getcouponscountbyuserId(userid);
-				logger.info("strs.length == 1 두번째 : " + couponserviceimpl.getcouponscountbyuserId(userid));
+				int canreceivecouponcount = couponServiceImpl.getCouponsCountByUserId(userid);
+				logger.info("strs.length == 1 두번째 : " + couponServiceImpl.getCouponsCountByUserId(userid));
 				if(canreceivecouponcount > 0) {
 					session.sendMessage(new TextMessage("받을 수 있는 쿠폰 개수가 " + canreceivecouponcount + "개가 있습니다."));
 					couponAlarmChecklist.put(userid,1);

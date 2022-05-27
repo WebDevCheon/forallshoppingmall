@@ -2,14 +2,17 @@ package spring.myapp.shoppingmall.service;
 
 import java.util.HashMap;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.dto.Goods;
 import spring.myapp.shoppingmall.dto.Refund;
 
 @Service
-public class AdminServiceImpl implements AdminService{
+public class AdminServiceImpl implements AdminService {
 	@Autowired
 	private MallDao Malldao;
 	
@@ -19,7 +22,8 @@ public class AdminServiceImpl implements AdminService{
 	}
 	
 	@Override
-	public void updatestatuscancel(String merchant_id,String cancel) {
+	@Transactional
+	public void updateStatusCancel(String merchant_id,String cancel) {
 		Malldao.statusupdatecancel(merchant_id,cancel);
 	}
 	
@@ -29,37 +33,38 @@ public class AdminServiceImpl implements AdminService{
 	}
 	
 	@Override
-	public Refund getrefund(String merchant_id) {
+	public Refund getRefund(String merchant_id) {
 		return Malldao.getrefund(merchant_id);
 	}
 	
 	@Override
-	public List<Goods> getmonthbooklist(int curPageNum){
+	public List<Goods> getMonthBookList(int curPageNum){
 		return Malldao.getmonthbooklist(curPageNum);
 	}
 	
 	@Override
-	public void setmonthbooklist(List<String> selectedbooklist) {
+	public void setMonthBookList(List<String> selectedbooklist) {
 		Malldao.setmonthbooklist(selectedbooklist);
 	}
 	
 	@Override
-	public void downmonthbooklist() {
+	public void downMonthBookList() {
 		Malldao.downmonthbooklist();
 	}
 
 	@Override
-	public Goods findbook(String name) {
+	public Goods findBook(String name) {
 		return Malldao.findbook(name);
 	}
 	
 	@Override
-	public void settodaybookselect(int bookid) {
+	public void setTodayBookSelect(int bookid) {
 		Malldao.settodaybookselect(bookid);
 	}
 
 	@Override
-	public void purchasecancel(HashMap<String, Object> map) {
+	@Transactional
+	public void purchaseCancel(HashMap<String, Object> map) {
 		Malldao.purchasecancel(map);
 	}
 }

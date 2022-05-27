@@ -46,7 +46,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {		// �
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-    		Authentication authentication) throws IOException, ServletException {  //로그인 성공후에 호출될 메소드
+    		Authentication authentication) throws IOException, ServletException {   //로그인 성공후에 호출될 메소드
     	clearAuthenticationAttributes(request);
     	request.getSession().setAttribute("Userid",request.getParameter("id"));		// 세션 Userid 속성값에 유저의 아이디를 저장
     	if(request.getParameter("id").substring(0,5).equals("admin"))		// 관리자의 아이디일 경우에 admingrp라는 세션 속성값을 따로 저장

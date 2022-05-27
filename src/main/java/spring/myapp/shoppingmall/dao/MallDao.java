@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import spring.myapp.shoppingmall.dto.Bookrecommend;
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
@@ -29,7 +28,6 @@ import spring.myapp.shoppingmall.dto.User;
 import spring.myapp.shoppingmall.dto.Vbank;
 
 @Repository
-@Transactional
 public class MallDao {
 	private static final Logger logger = LoggerFactory.getLogger(MallDao.class);
 
@@ -389,6 +387,7 @@ public class MallDao {
 		Query<Ordergoods> query = session.createQuery("from Ordergoods where merchant_id = :merchant_id",Ordergoods.class);
 		query.setParameter("merchant_id",merchant_uid);
 		List<Ordergoods> ordergoodslist = query.getResultList();
+		
 		for(int j=0; j < ordergoodslist.size();j++) {
 			Query<Order> selectOrder = session.createQuery("from Order where merchant_id = :merchant_id",Order.class);
 			selectOrder.setParameter("merchant_id",merchant_uid);
@@ -594,7 +593,6 @@ public class MallDao {
 		Coupon coupon = session.get(Coupon.class,cnumber);
 		Query query = null;
 		if(coupon.getUsecheck().equals("no")) {
-			System.out.println("쿠폰 사용");
 			query = session.createQuery("update Coupon set usecheck = :usecheck where id = :id");
 			query.setParameter("usecheck",yes);  //쿠폰이 사용되었음
 			query.setParameter("id",cnumber);
@@ -1062,7 +1060,6 @@ public class MallDao {
 		Query<Reply> query = session.createQuery("from Reply where user_id = :userid",Reply.class);
 		query.setParameter("userid", userid);
 		List<Reply> reviewNum = query.getResultList();
-		System.out.println(reviewNum.size());
 		int rnum = reviewNum.size();
 		return rnum;
 	}

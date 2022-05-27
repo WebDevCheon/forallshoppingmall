@@ -33,7 +33,7 @@ public class UserController
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
-	private UserServiceImpl userserviceimpl;
+	private UserServiceImpl userServiceImpl;
 	
 	@Autowired
 	private JavaMailSender mailSender;
@@ -72,14 +72,14 @@ public class UserController
 				logger.info("{}",error.getDefaultMessage());
 			return "/join/joinform";
 		}
-		else if(userserviceimpl.checkalreadyexistemail(user.getEmail())) {
+		else if(userServiceImpl.checkAlreadyExistEmail(user.getEmail())) {
 			return "/join/joinfailed";
 		}
 		else {
 			try {
 				joinbyemail(user.getEmail());  // 사용자가 회원가입 폼에 입력한 이메일로 회원가입 인증 번호를 발송
 				model.addAttribute("user",user);
-				userserviceimpl.joinuser(user);
+				userServiceImpl.joinUser(user);
 				return "/join/beforejoinconfirm";
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -91,7 +91,7 @@ public class UserController
 	@RequestMapping("/afterjoinconfirm")
 	public String afterjoinconfirm(@RequestParam String email) {		// 회원의 인증메일로부터 회원 가입 완료
 		logger.info("email : {} 계정으로 가입이 완료되었습니다.",email);
-		userserviceimpl.authorizingemailconfirm(email);
+		userServiceImpl.authorizingEmailConfirm(email);
 		return "/join/afterjoinconfirm";
 	}
 	
@@ -135,7 +135,7 @@ public class UserController
 	@ResponseBody
 	public Integer authFindUserId(HttpServletResponse response_email,@RequestParam String e_mail,
 			@RequestParam String phoneNumber,@RequestParam String name,Model model) throws IOException {//(DB에 있는 이름,핸드폰번호,이메일로 조회)만약 DB에 저장되어 있는 이메일이 맞다면,String 이메일을 보내고,이메일에 인증 번호를 보낸다.만약 DB에 정보가 일치하지 않으면,그렇지 않으면 null값을 보낸다
-		if(userserviceimpl.authId(e_mail, phoneNumber, name)) {
+		if(userServiceImpl.authId(e_mail, phoneNumber, name)) {
 			Random r = new Random();
 			int dice = r.nextInt(4589362) + 49311; // 이메일로 받는 인증코드 부분 (난수)
 			String setfrom = "1692078@hansung.ac.kr";  //1692078@gmail.com
@@ -173,7 +173,7 @@ public class UserController
 	@ResponseBody
 	public Integer authFindUserPassword(HttpServletResponse response_email,@RequestParam String e_mail,@RequestParam String phoneNumber,
 			@RequestParam String name,@RequestParam String cId,Model model) throws IOException { //(DB에 있는 이름,핸드폰번호,이메일로 조회)만약 DB에 저장되어 있는 이메일이 맞다면,String 이메일을 보내고,이메일에 인증 번호를 보낸다.만약 DB에 정보가 일치하지 않으면,그렇지 않으면 null값을 보낸다
-		if(userserviceimpl.authPw(cId,e_mail, phoneNumber, name)){
+		if(userServiceImpl.authPw(cId,e_mail, phoneNumber, name)){
 			Random r = new Random();
 			int dice = r.nextInt(4589362) + 49311; // 이메일로 받는 인증코드 부분 (난수)
 
@@ -211,22 +211,21 @@ public class UserController
 	@RequestMapping(value = "/findUserId",method = RequestMethod.POST)	// 아이디 찾기 폼으로 받은 정보를 바탕으로 아이디 찾음
 	public String findUserId(@RequestParam String name,@RequestParam String phoneNumber,Model model,HttpServletRequest request){
 		logger.info("이름 : {},핸드폰 번호 : {} 정보로 아이디 찾기를 시도",name,phoneNumber);
-		System.out.println(request.getParameter("name"));
-		userserviceimpl.find(name,phoneNumber,model);
+		userServiceImpl.find(name,phoneNumber,model);
 		return "/finduser/findIdResult";
 	}
 	
 	@RequestMapping(value = "/findUserPw",method = RequestMethod.POST)	// 비밀번호 찾기 폼으로부터 받은 정보를 바탕으로 비밀번호 찾음
 	public String findUserPw(@RequestParam String cId,Model model){
 		logger.info("아이디 : {} 정보로 비밀번호 찾기를 시도",cId);
-		userserviceimpl.find(cId,model);
+		userServiceImpl.find(cId,model);
 		return "/finduser/findPwResult";
 	}
 
 	@RequestMapping(value = "/repassword",method = RequestMethod.POST) //비밀번호 찾기 결과 비밀번호 바꾸기
 	public String repassword(@RequestParam String userId,@RequestParam String repw){
 		logger.info("비밀번호 찾기에서 비밀번호 업데이트 - 계정 아이디 : {},계정 비밀번호 : {}",userId,repw);
-		userserviceimpl.execute(userId,repw);
+		userServiceImpl.execute(userId,repw);
 		return "redirect:/home";
 	}
 	
@@ -234,7 +233,7 @@ public class UserController
 	@ResponseBody
 	public int check(HttpServletRequest request,@RequestParam String id){
 		int count = 0;
-		count = userserviceimpl.execute(id); 
+		count = userServiceImpl.execute(id); 
 		return count;
 	}
 	
@@ -247,13 +246,13 @@ public class UserController
 	public ModelAndView updatePassword(@RequestParam String Userid,@RequestParam String password,
 			@RequestParam String nowPassword,RedirectAttributes redirectAttributes){		
 		logger.info("아이디 : {},비밀번호 : {} 정보로 비밀번호 업데이트 시도",Userid,password);
-		if(!userserviceimpl.checkNowPassword(Userid, nowPassword)){
+		if(!userServiceImpl.checkNowPassword(Userid, nowPassword)){
 			ModelAndView mv = new ModelAndView(); 
 			mv.setViewName("redirect:/updatePasswordForm"); 
 			redirectAttributes.addFlashAttribute("error","현재 비밀번호가 틀렸습니다");
 			return mv;
 		}
-		userserviceimpl.update(Userid,password);
+		userServiceImpl.update(Userid,password);
 		ModelAndView mv = new ModelAndView(); 
 		mv.setViewName("home"); 
 		return mv;

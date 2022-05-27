@@ -1,95 +1,93 @@
 package spring.myapp.shoppingmall.service;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.dto.Reply;
 import spring.myapp.shoppingmall.dto.ReviewReply;
 
 @Service
-public class ReplyServiceImpl implements ReplyService{
+public class ReplyServiceImpl implements ReplyService {
 	@Autowired
 	private MallDao Malldao;
 	
 	@Override
-	public List<Reply> commentlist(String gId){
-		return Malldao.commentlist(gId);
+	public List<Reply> commentList(String goodsId) {
+		return Malldao.commentlist(goodsId);
 	}
 	
 	@Override
-	public void contentreplydelete(String bookname, String rId){
-		Malldao.contentreplydelete(bookname,rId);
+	public void contentReplyDelete(String bookname, String reviewId) {
+		Malldao.contentreplydelete(bookname,reviewId);
 	}
 	
 	@Override
-	public void contentreplymodify(String bookname, String rId, String content){
-		Malldao.contentreplymodify(bookname,rId,content);
+	public void contentReplyModify(String bookname, String reviewId, String content) {
+		Malldao.contentreplymodify(bookname,reviewId,content);
 	}
 	
 	@Override
-	public boolean addComment(String bookname,String user_id,String reply){
+	public boolean addComment(String bookname,String user_id,String reply) {
 		return Malldao.addComment(bookname,user_id,reply);
 	}
 	
 	@Override
-	public boolean addreview(Reply reply) {
+	public boolean addReview(Reply reply) {
 		return Malldao.addreview(reply);
 	}
 	
 	@Override
-	public List<Reply> getAllReply(String bookname){
+	public List<Reply> getAllReply(String bookname) {
 		return Malldao.getAllReply(bookname);
 	}
 	
 	@Override
-	public void addreviewreply(ReviewReply userreview,int rid) {
-		Malldao.addreviewreply(userreview,rid);
+	public void addReviewReply(ReviewReply userreview,int reviewId) {
+		Malldao.addreviewreply(userreview,reviewId);
 	}
 	@Override
-	public void reviewmodify(String content, int reviewid) {
-		Malldao.reviewmodify(content,reviewid);
+	public void reviewModify(String content, int reviewId) {
+		Malldao.reviewmodify(content,reviewId);
 	}
 
 	@Override
-	public void reviewdelete(int reviewid) {
-		Malldao.reviedelete(reviewid);
+	public void reviewDelete(int reviewId) {
+		Malldao.reviedelete(reviewId);
 	}
 	
 	@Override
-	public void reviewreplydelete(int reviewreplyid) {
-		Malldao.reviewreplydelete(reviewreplyid);
+	public void reviewReplyDelete(int reviewReplyId) {
+		Malldao.reviewreplydelete(reviewReplyId);
 	}
 
 	@Override
-	public void reviewrecommend(int reviewid,String userid) {
-		Malldao.reviewrecommend(reviewid,userid);
+	public void reviewRecommend(int reviewId,String userId) {
+		Malldao.reviewrecommend(reviewId,userId);
 	}
 
 	@Override
-	public void reviewreplyrecommend(int reviewreplyid,String userid) {
-		Malldao.reviewreplyrecommend(reviewreplyid,userid);
+	public void reviewReplyRecommend(int reviewReplyId,String userId) {
+		Malldao.reviewreplyrecommend(reviewReplyId,userId);
 	}
 
 	@Override
-	public boolean reviewrecommendcheck(int reviewid,String userid) {
-		return Malldao.reviewrecommendcheck(reviewid,userid);
+	public boolean reviewRecommendCheck(int reviewId,String userId) {
+		return Malldao.reviewrecommendcheck(reviewId,userId);
 	}
 	
 	@Override
-	public boolean reviewreplyrecommendcheck(int reviewreplyid, String userid) {
-		return Malldao.reviewreplyrecommendcheck(reviewreplyid,userid);
+	public boolean reviewReplyRecommendCheck(int reviewReplyId, String userId) {
+		return Malldao.reviewreplyrecommendcheck(reviewReplyId,userId);
 	}
 	
 	@Override
-	public Reply getreviewbyrid(int reviewid) {
-		return Malldao.getreviewbyid(reviewid);
+	public Reply getReviewByReviewId(int reviewId) {
+		return Malldao.getreviewbyid(reviewId);
 	}
 
 	@Override
-	public int pastreviewcheck(String Userid,String bookname) {
-		return Malldao.pastreviewcheck(Userid,bookname);
+	public int pastReviewCheck(String userId,String bookName) {
+		return Malldao.pastreviewcheck(userId,bookName);
 	}
 }
