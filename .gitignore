@@ -6,6 +6,12 @@ goodsimgUpload/
 reviewUpload/
 bin/
 tmp/
+.project
+.keystore
+.xml
+.classpath
+target/
+.settings/
 *.tmp
 *.bak
 *.swp
