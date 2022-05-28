@@ -17,7 +17,7 @@ Forallshoppingmall BookStore
 > <br><br>
 > 배포 환경 : AWS EC2 Linux (t3.xlarge) <br>
 
-## 데이터 입출력 구조
+## 클래스 다이어그램 / 시스템 구조
 > <img src = "https://user-images.githubusercontent.com/57096651/170808906-685e996c-5296-49d8-9df5-8570ade0329d.PNG" width = "80%">
 
 ## 동영상 시연
