@@ -18,7 +18,7 @@ Forallshoppingmall BookStore
 > 배포 환경 : AWS EC2 Linux (t3.xlarge) <br>
 
 ## 데이터 입출력 구조
-> <img src = "https://user-images.githubusercontent.com/57096651/170730567-eeb186fe-27ba-4dbf-ad2b-4b326ed2ba1e.PNG" width = "80%">
+> <img src = "https://user-images.githubusercontent.com/57096651/170808906-685e996c-5296-49d8-9df5-8570ade0329d.PNG" width = "80%">
 
 ## 동영상 시연
 > * SpringSecurity에 의해 Request Filtering -> LoginForm
