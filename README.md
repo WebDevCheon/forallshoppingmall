@@ -4,18 +4,17 @@ Forallshoppingmall BookStore
 
 <hr>
 
-## 사용된 기술
-> Programming Language : Java 1.8
-> <br><br>
-> DBMS : MySQL(4.0 Version)
-> <br><br>
-> ORM : Hibernate
-> <br><br>
-> FrameWork : SpringFrameWork(5.1.5 Version)
-> <br><br>
-> Pattern : MVC (View : JSP)
-> <br><br>
-> 배포 환경 : AWS EC2 Linux (t3.xlarge) <br>
+## Tech
+<p align="center">
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=HTML5&logoColor=white"/></a> &nbsp
+<img src="https://img.shields.io/badge/CSS-1572B6?style=flat-square&logo=CSS3&logoColor=white"/></a> &nbsp
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/></a> &nbsp
+<img src="https://img.shields.io/badge/Java-00599C?style=flat-square&logo=Java&logoColor=white"/></a> &nbsp 
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/></a> &nbsp
+<img src="https://img.shields.io/badge/JSP-4479A1?style=flat-square&logo=JSP&logoColor=white"/></a> &nbsp 
+<img src="https://img.shields.io/badge/Spring-339933?style=flat-square&logo=Spring&logoColor=white"/></a> &nbsp
+<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat-square&logo=Amazon%20AWS&logoColor=white"/></a> &nbsp 
+</p>
 
 ## 클래스 다이어그램 / 시스템 구조
 > <img src = "https://user-images.githubusercontent.com/57096651/170808906-685e996c-5296-49d8-9df5-8570ade0329d.PNG" width = "80%">
