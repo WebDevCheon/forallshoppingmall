@@ -49,9 +49,7 @@ public class AdminController {
 					}
 				}
 			}
-			logger.info("request encoding : {}", request.getCharacterEncoding());
 			try {
-				logger.info("goods.getName : " + new String(goods.getName().getBytes("iso-8859-1"), "utf-8"));
 				goods.setName(new String(goods.getName().getBytes("iso-8859-1"), "utf-8"));
 				goods.setWriter(new String(goods.getWriter().getBytes("iso-8859-1"), "utf-8"));
 				goods.setGoodscontent(new String(goods.getGoodscontent().getBytes("iso-8859-1"), "utf-8"));
@@ -68,9 +66,8 @@ public class AdminController {
 				e.printStackTrace();
 			}
 			List<ObjectError> errors = result.getAllErrors();
-			for (ObjectError error : errors) {
-				logger.info("error : {}", error);
-			}
+			for (ObjectError error : errors)
+				logger.info("에러 내용 -> {}", error);
 			model.addAttribute("bigclass", goods.getBigclass());
 			return "/admin/adminregister";
 		}
@@ -109,7 +106,6 @@ public class AdminController {
 	@RequestMapping(value = "/findbook", method = RequestMethod.POST)
 	@ResponseBody
 	public JSONObject findbook(@RequestParam String name) {
-		logger.info("name : " + name);
 		Goods goods = adminServiceImpl.findBook(name);
 		JSONObject json = new JSONObject();
 		json.put("id", goods.getId());
@@ -145,7 +141,6 @@ public class AdminController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : " + page);
 		paging.pagingforAdmin(curPageNum, model);
 		return curPageNum;
 	}
@@ -154,8 +149,6 @@ public class AdminController {
 	@ResponseBody
 	public void setmonthbooklist(@RequestBody HashMap<String, Object> map) {
 		List<String> selectedbooklist = (ArrayList<String>) map.get("selectedbooklist");
-		for (int i = 0; i < selectedbooklist.size(); i++)
-			logger.info("{}", Integer.parseInt(selectedbooklist.get(i)));
 		adminServiceImpl.setMonthBookList(selectedbooklist);
 	}
 
@@ -209,7 +202,6 @@ public class AdminController {
 	@RequestMapping(value = "/findrefund", method = RequestMethod.POST) // 고객의 환불 요청을 DB에서 조회
 	@ResponseBody
 	public JSONObject findrefund(@RequestBody HashMap<String, Object> map) {
-		logger.info((String) map.get("orderid"));
 		Refund refund = adminServiceImpl.getRefund((String) map.get("orderid")); // 고객의 환불 데이터를 가져옴
 		if (refund != null) {
 			Integer amount = refund.getAmount();
@@ -230,9 +222,7 @@ public class AdminController {
 	private Model pagingModelRefund(Model model, HttpServletRequest request) { // 쿠폰 내역의 페이징 처리
 		int curPageNum = 0; // 현재 사용자가 보는 페이지
 		curPageNum = pagingrefactoringforRefund(curPageNum, request, model);
-		logger.info("curPageNum refactoring : {}", curPageNum);
 		List<Refund> requestlist = paging.refundlist(curPageNum);
-		logger.info("requestlist : {}", requestlist);
 		model.addAttribute("list", requestlist);
 		return model;
 	}
@@ -243,7 +233,6 @@ public class AdminController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : " + page);
 		paging.pagingforRefund(curPageNum, model);
 		return curPageNum;
 	}

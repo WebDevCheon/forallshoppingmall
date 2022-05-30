@@ -29,7 +29,6 @@
 						alert('물품을 장바구니에 담아주세요');
 					}
 					
-					//alert('성공');
 					var ordernum = makeid();
 					var obj = {"id" : userid,"merchant_id" : ordernum,"phoneNumber" : sphone,"address" : saddr,
 							"buyer_name" : sname,"memo" : smemo,"price" : document.getElementById("tmoney").value,
@@ -48,8 +47,6 @@
 				        	}
 				        	user_merchant = data;
 				        	console.log("user_merchant : " + user_merchant);
-				        	//alert(user_merchant);
-							//alert('success');
 							document.onkeydown = noEvent;
 							$.ajax({
 								type : "POST",
@@ -57,7 +54,7 @@
 								data : JSON.stringify({"booknamelist" : booknamelist,"bookqtylist" : bookqtylist,"merchant_uid" : ordernum}),
 								headers : { "Content-Type": "application/json","X-CSRF-Token":csrf},
 								success : function(data){
-									if(data == true){
+									if(data == true) {
 										alert('결제 도중에 책의 재고가 부족하여 결제를 할 수가 없습니다.');
 										return;
 									}
@@ -91,7 +88,6 @@
 							        msg += '고유ID : ' + rsp.imp_uid;
 							        msg += '상점 거래ID : ' + rsp.merchant_uid;
 							        msg += '결제 금액 : ' + rsp.paid_amount;
-							        //alert(msg);
 							        $.ajax({
 							            url: contextPath + "/completeToken", // 가맹점 서버
 							            method: "POST",
@@ -101,8 +97,6 @@
 							        	console.log(data);
 							        	  switch(data.check) {
 							              	case 'success':
-												//alert('결제 성공 completeToken' + rsp.merchant_uid);
-												//console.log("결제 성공 이후 : " + rsp.merchant_uid);
 												location.href = contextPath + "/OrderResult?merchant_id=" + rsp.merchant_uid;
 												return false;
 							              	case 'failed':
@@ -119,7 +113,6 @@
 							    		headers : {"Content-Type" : "application/json","X-CSRF-Token":csrf},
 							    		data : JSON.stringify(merchantdata),
 							    		success : function(){
-							    			alert(userid);
 							    			alert("결제에 실패하였습니다");
 							    		},
 							    		complete : function(){
@@ -131,14 +124,13 @@
 						  },
 						  error : function(){
 							  $("#paymentPhone").attr("onclick","paymentPhone(" + "'" + userid + "'" + ");return false");
-							  alert('에러')
+							  alert('에러 발생');
 						  }
 						});
 				        }
 						,
 				        error: function(xhr, status, error) {
 				        	$("#paymentPhone").attr("onclick","paymentPhone(" + "'" + userid + "'" + ");return false");
-				            alert(error);
 				        }  
 				    });
 				}
@@ -181,9 +173,6 @@
 	        		return;
 	        	}
 	        	user2_merchant = data;
-	        	console.log("user2_merchant : " + user2_merchant);
-	        	alert(user2_merchant);
-				alert('success');
 				document.onkeydown = noEvent;
 				
 				$.ajax({
@@ -223,7 +212,6 @@
 				        msg += '고유ID : ' + rsp.imp_uid;
 				        msg += '상점 거래ID : ' + rsp.merchant_uid;
 				        msg += '결제 금액 : ' + rsp.paid_amount;
-				        alert(msg);
 				        msg += '카드 승인번호 : ' + rsp.apply_num;
 				        $.ajax({
 				            url: contextPath + "/completeToken", // 가맹점 서버
@@ -260,13 +248,11 @@
 			     });
 				},error : function(){
 					$("#paymentCard").attr("onclick","paymentCard(" + "'" + userid + "'" + ");return false");
-					alert('에러');
 				}
 			 });
 	        },
 	        error: function(xhr, status, error) {
 	        	$("#paymentCard").attr("onclick","paymentCard(" + "'" + userid + "'" + ");return false");
-	            alert(error);
 	        }  
 	  });
    }
@@ -311,8 +297,6 @@
 	        	}
 	        	user3_merchant = data;
 	        	console.log("user3_merchant : " + user3_merchant);
-	        	alert(user3_merchant);
-				alert('success');
 				document.onkeydown = noEvent;
 				$.ajax({
 					type : "POST",
@@ -358,7 +342,6 @@
 				        msg += '상점 거래ID : ' + rsp.merchant_uid;
 				        msg += '결제 금액 : ' + rsp.paid_amount;
 				        msg += '카드 승인번호 : ' + rsp.apply_num;
-				        alert(msg);
 				        $.ajax({
 				            url: contextPath + "/completeToken", // 가맹점 서버
 				            method: "POST",
@@ -400,13 +383,11 @@
 			     });
 				},error : function() {
 					$("#paymentWithOutDeposit").attr("onclick","paymentWithOutDeposit(" + "'" + userid + "'" + ");return false");
-					alert('에러');
 				}
 			  });
 	        },
 	        error: function(xhr, status, error) {
 	        	$("#paymentWithOutDeposit").attr("onclick","paymentWithOutDeposit(" + "'" + userid + "'" + ");return false");
-	            alert(error);
 	        }  
 	    });
 	}
@@ -432,7 +413,6 @@
 						alert('물품을 장바구니에 담아주세요');
 					}
 						
-			alert('성공');
 			var ordernum = makeid();
 			var obj = {"id" : userid,"merchant_id" : ordernum,"phoneNumber" : sphone,
 					"address" : saddr,"buyer_name" : sname,"memo" : smemo,
@@ -452,8 +432,6 @@
 		        	}
 		        	user4_merchant = data;
 		        	console.log("user4_merchant : " + user4_merchant);
-		        	alert(user4_merchant);
-					alert('success');
 					document.onkeydown = noEvent;
 					$.ajax({
 						type : "POST",
@@ -493,7 +471,6 @@
 					        msg += '고유ID : ' + rsp.imp_uid;
 					        msg += '상점 거래ID : ' + rsp.merchant_uid;
 					        msg += '결제 금액 : ' + rsp.paid_amount;
-					        alert(msg);
 					        msg += '카드 승인번호 : ' + rsp.apply_num;
 					        $.ajax({
 					            url: contextPath + "/completeToken", // 가맹점 서버
@@ -527,13 +504,11 @@
 				     });
 				   },error : function() {
 					   $("#paymentWithDeposit").attr("onclick","paymentWithDeposit(" + "'" + userid + "'" + ");return false");
-					   alert('에러');
 				   }
 				 });
 		        },
 		        error: function(xhr, status, error) {
 		        	$("#paymentWithDeposit").attr("onclick","paymentWithDeposit(" + "'" + userid + "'" + ");return false");
-		            alert(error);
 		        }  
 		    });
 		}
@@ -563,7 +538,7 @@
   				data : {"cnumber" : cnumber.trim()},
   				success : function(data){
   					if(data == "1"){	//쿠폰 사용한 적 있음
-  						alert("이미 사용한 쿠폰입니다.");
+  						alert("이미 사용한 쿠폰이거나 존재하지 않는 쿠폰입니다.");
   						return;
   					} else {
   						document.getElementById("CouponId").value = cnumber.trim();
@@ -641,7 +616,6 @@
 		 headers: {"Content-Type": "application/json","X-CSRF-Token":csrf},
 		 method : "POST",
 		 success : function(data) {
-			alert(data);
 			document.getElementById("sname").value = data.name;
 			document.getElementById("saddr").value = data.address;
 			document.getElementById("sphone").value = data.phone;

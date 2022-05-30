@@ -198,7 +198,7 @@ public class UserController
 				messageHelper.setText(content); // 메일 내용
 				mailSender.send(message);
 			} catch (Exception e) {
-				logger.info("비밀번호 찾기 이메일을 발송 도중 에러 발생 : " + e);
+				logger.info("비밀번호 찾기 이메일을 발송 도중 에러 발생 -> " + e);
 			}
 			return dice; // 이메일 인증 성공
 		}

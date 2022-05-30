@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
@@ -14,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.myapp.shoppingmall.controller.MallController;
+
+import spring.myapp.shoppingmall.controller.PaymentAndRefundController;
 import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Order;
@@ -85,31 +87,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	@Transactional
-	public int InsertVbankAndUpdateStatus(Order order,Vbank vbank,String[] booknamelist, Integer[] bookqtylist) {
-			try {
-				Malldao.insertVbankgoods(order.getMerchant_id(),booknamelist,bookqtylist);
-				Malldao.insertPrice(order.getPrice(),order.getMerchant_id());
-				Malldao.insertvbank(order.getMerchant_id(),vbank.getVbanknum(),vbank.getVbankname(),vbank.getVbankdate(),vbank.getVbankholder(),order.getName(),vbank.getVbankcode());
-				Malldao.statusupdate(order.getStatus(),order.getMerchant_id(),order.getImp_uid(),order.getPaymethod());
-				if(!order.getCouponid().equals("")){
-					Malldao.updatestatususecoupon(order.getCouponid(),order.getMerchant_id());
-				}
-				return 1;
-			} catch(Exception e) {
-				e.printStackTrace();
-				Order failedorder = Malldao.getMerchantid(order.getMerchant_id());
-				logger.info("주문 상태 : {}",failedorder.getStatus());
-				if(failedorder.getStatus().equals("not paid")) {
-					logger.info("주문 실패 번호 : {}",failedorder.getOrderid());
-					logger.info("rollback 성공 :" + order.getMerchant_id());
-					Malldao.rollbackdeletevbankmerchantid(failedorder.getMerchant_id());
-				}
-				return 0;
-			}
-	}
-	
-	@Override
 	public void InsertMerchant(String id,String merchant_id,String phoneNumber,String address,String buyer_name,String memo,int price) {
 		Malldao.insertMerchant(id,merchant_id,phoneNumber,address,buyer_name,memo,price);
 	}
@@ -121,39 +98,60 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	@Transactional
-	public void updateStatusWebhook(Order vbankorder,Vbank vbank){	
+	public int InsertVbankAndUpdateStatus(Order order,Vbank vbank,String[] booknamelist, Integer[] bookqtylist) {	// 무통장 입금으로 고객이 결제를 신청했을때(돈 입금 안된 상태)
+		try {
+			Malldao.insertVbankgoods(order.getMerchant_id(),booknamelist,bookqtylist);	// 처음 가상 계좌 신청했을때 책의 이름/수량을 DB에 insert
+			Malldao.insertPrice(order.getPrice(),order.getMerchant_id());	// 무통장 입금 주문 번호에 결제할 금액을 update
+			Malldao.insertvbank(order.getMerchant_id(),vbank.getVbanknum(),vbank.getVbankname(),vbank.getVbankdate(),vbank.getVbankholder(),order.getName(),vbank.getVbankcode());	// 무통장 정보를 insert
+			Malldao.statusupdate(order.getStatus(),order.getMerchant_id(),order.getImp_uid(),order.getPaymethod());	 // 결제ID의 상태를 update
+			if(!order.getCouponid().equals(""))
+				Malldao.updatestatususecoupon(order.getCouponid(),order.getMerchant_id());
+			return 1;
+		} catch(Exception e) {
+			logger.info("에러 발생 In InsertVbankAndUpdateStatus Method -> " + e,e);
+			Order failedorder = Malldao.getMerchantid(order.getMerchant_id());
+			logger.info("에러 발생 주문 DB 상태 : {}",failedorder.getStatus());
+			if(failedorder.getStatus().equals("not paid")) {
+				logger.info("주문 실패 번호 : {}",failedorder.getOrderid());
+				logger.info("롤백 성공 주문 ID :" + order.getMerchant_id());
+			}
+			return 0;
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void updateStatusWebhook(Order vbankorder,Vbank vbank) {	// 무통장 가상 계좌에 고객이 돈을 입금했을때	
 		try {
 			Malldao.statusupdate(vbankorder.getStatus(),vbankorder.getMerchant_id(),vbankorder.getImp_uid(),vbankorder.getPaymethod());
 			Malldao.subordergoodsVbank(vbankorder.getMerchant_id());
 		} catch(Exception e) {
-			communicateWithIMPORTServer(vbankorder,vbank);
+			logger.info("에러 발생 In updateStatusWebhook Method -> " + e,e);
+			RefundIMPORTServerException(vbankorder,vbank);
 			if(Malldao.getMerchantid(vbankorder.getMerchant_id()).getStatus().equals("ready")) {
-				logger.info("주문 실패 번호 : {}",vbankorder.getOrderid());
-				logger.info("rollback 성공 :" + vbankorder.getMerchant_id());
-				logger.info("무통장 입금 웹훅 실패 : " + vbankorder);
-				Malldao.rollbackdeletemerchantid(vbankorder.getMerchant_id());
+				logger.info("무통장 입금 주문 실패 번호 : {}",vbankorder.getOrderid());
+				logger.info("무통장 입금 롤백 성공 결제 ID :" + vbankorder.getMerchant_id());
 			} 				
 		}
 	}
 	
 	@Override
 	@Transactional
-	public int updateStatusAndOrder(Order order,String[] booknamelist,Integer[] bookqtylist) {
+	public int updateStatusAndOrder(Order order,String[] booknamelist,Integer[] bookqtylist) {	// 결제 완료로 인해서 주문할 책,금액,주문 상태를 update
 			try {
-				Malldao.insertgoods(order.getMerchant_id(),booknamelist,bookqtylist);
-				Malldao.insertPrice(order.getPrice(),order.getMerchant_id());
-				Malldao.statusupdate(order.getStatus(),order.getMerchant_id(),order.getImp_uid(),order.getPaymethod());
-				if(!order.getCouponid().equals(""))
+				Malldao.insertgoods(order.getMerchant_id(),booknamelist,bookqtylist);	// 결제ID를 바탕으로 주문할 책의 이름/수량을 DB에 update
+				Malldao.insertPrice(order.getPrice(),order.getMerchant_id());			// 결제ID의 가격을 DB에 insert
+				Malldao.statusupdate(order.getStatus(),order.getMerchant_id(),order.getImp_uid(),order.getPaymethod());	// 주문의 상태를 update
+				if(!order.getCouponid().equals(""))	// 쿠폰을 적용했으면,그 쿠폰을 사용처리 update
 					Malldao.updatestatususecoupon(order.getCouponid(),order.getMerchant_id());
 				return 1;
 			} catch(Exception e) {
-				e.printStackTrace();
-				communicateWithIMPORTServer(order,null);
+				logger.info("에러 발생 In updateStatusAndOrder Method -> " + e,e);
+				RefundIMPORTServerException(order,null);
 				Order failedorder = Malldao.getMerchantid(order.getMerchant_id());
 				if(failedorder.getStatus().equals("not paid")) {
 					logger.info("주문 실패 번호 : {}",failedorder.getOrderid());
-					logger.info("rollback 성공 :" + order.getMerchant_id());
-					Malldao.rollbackdeletemerchantid(failedorder.getMerchant_id());
+					logger.info("롤백 성공 결제 ID : " + order.getMerchant_id());
 				}
 				return 0;
 			}
@@ -185,14 +183,14 @@ public class OrderServiceImpl implements OrderService {
 			else if(coupon.getType() == 3)
 				sum = sum - (int)(0.2 * sum);
 			
-			if(sum != Integer.valueOf(price))	//가격이 다름
+			if(sum != Integer.valueOf(price))	// 가격이 다름
 				return 1;
 			else
 				return 0;
 		}
 	}
 	
-	private void communicateWithIMPORTServer(Order order,Vbank vbank) {
+	private void RefundIMPORTServerException(Order order,Vbank vbank) {		// 에러 발생시에 아임포트 서버에 환불 처리
 		String cancelstatus = null;
 		try {
 			JSONObject json = new JSONObject();
@@ -204,10 +202,10 @@ public class OrderServiceImpl implements OrderService {
 			logger.info("imp_key : " + json.get("imp_key"));
 			logger.info("imp_secret : " + json.get("imp_secret"));
 			JSONObject obj = new JSONObject();
-			String token = MallController.getToken(json,"https://api.iamport.kr/users/getToken");
-			String reason;
+			String token = PaymentAndRefundController.getToken(json,"https://api.iamport.kr/users/getToken");
 			int amount = order.getPrice();
 			int cancel_request_amount = order.getPrice();
+
 			if(vbank != null) {
 				obj.put("refund_holder",vbank.getVbankholder());
 				obj.put("refund_bank",vbank.getVbankcode());
@@ -217,7 +215,8 @@ public class OrderServiceImpl implements OrderService {
 				logger.info("이미 전액환불된 상품입니다.");
 			obj.put("imp_uid",order.getImp_uid());
 			obj.put("cancel_request_amount",order.getPrice());
-			JSONObject getcanceldata = null;		//아임포트 서버에서 환불 받은 정보
+			JSONObject getcanceldata = null;		// 아임포트 서버에서 환불 받은 정보
+			
 			try{
 				String requestString = "";
 				URL url = new URL("https://api.iamport.kr/payments/cancel");
@@ -240,29 +239,24 @@ public class OrderServiceImpl implements OrderService {
 					br.close();
 					requestString = sb.toString();
 				}
-			os.flush();
-			connection.disconnect();
-				try {
-					JSONParser jsonParser = new JSONParser();
-					JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
-					logger.info("jsonObj " + jsonObj);
-					if((Long)jsonObj.get("code")  == 0) {
-						getcanceldata = (JSONObject) jsonObj.get("response");
-						logger.info("getcanceldata==>>"+getcanceldata );
-					}
-				} catch(Exception exception) {
-					exception.printStackTrace();
+				os.flush();
+				connection.disconnect();
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
+				logger.info("jsonObj " + jsonObj);
+				if((Long)jsonObj.get("code")  == 0) {
+					getcanceldata = (JSONObject) jsonObj.get("response");
+					logger.info("환불정보 -> " + getcanceldata);
 				}
-			} catch(Exception exception){
-				exception.printStackTrace();
+			} catch(Exception e) {
+				logger.info("에러 발생 In RefundIMPORTServerException Method -> " + e,e);
 			}
-			logger.info("환불 정보 : {}",getcanceldata);
 			cancelstatus = String.valueOf(getcanceldata.get("status"));
-			logger.info("cancelstatus : " + cancelstatus);
-		} catch (Exception exception) {
-			exception.printStackTrace();
+			logger.info("환불 정보 -> {}",getcanceldata);
+			logger.info("환불 확정 상태 -> " + cancelstatus);
+		} catch (Exception e) {
+			logger.info("에러 발생 In RefundIMPORTServerException Method -> " + e,e);
 		}
-		logger.info("{}","merchant_id in Rollback : " + order.getMerchant_id());
   	}
   
   	@Override

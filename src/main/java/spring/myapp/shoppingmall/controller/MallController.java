@@ -84,12 +84,6 @@ public class MallController {
 	public String shop(@RequestParam(value = "bigclass", required = false) String bigclass,
 			@RequestParam(value = "subclass", required = false) String subclass, Model model,
 			HttpServletRequest request) {
-		if (request.getSession().getAttribute("Userid") != null)
-			logger.info("ID : " + request.getSession().getAttribute("Userid") + ", 대분류 : {}, 소분류: {}", bigclass,
-					subclass);
-		else
-			logger.info("대분류 : {}, 소분류: {}", bigclass, subclass);
-		
 		if (bigclass == null || subclass == null) {
 			bigclass = "novel"; 	 // 책의 대분류
 			subclass = "japannovel"; // 책의 소분류
@@ -107,12 +101,11 @@ public class MallController {
 			HttpServletRequest request) {
 		model.addAttribute("good", productServiceImpl.getProductDetails(Integer.valueOf(goods_id)));
 		model.addAttribute("mode", mode);
-		logger.info("getreviewlatest : {}", mode);
 		if (mode.equals("'getreviewlatest'")) {
-			logger.info("replylatest 실행");
+			logger.info("리뷰 최신순 조회");
 			pagingModelReplyLatest(model, request, bookname);
 		} else {
-			logger.info("replyhelp 실행");
+			logger.info("리뷰 도움순 조회");
 			pagingModelReply(model, request, bookname);
 		}
 		model.addAttribute("reviewreplylist", productServiceImpl.getReviewReply(bookname));
@@ -125,14 +118,12 @@ public class MallController {
 			@RequestParam(value = "goods_id", required = false) String goods_id, Model model,
 			HttpServletRequest request) {
 			if(reviewmode.equals("getreviewhelp")) {
-				logger.info("reviewmode : " + reviewmode.equals("getreviewhelp"));
 				model.addAttribute("good", productServiceImpl.getProductDetails(Integer.valueOf(goods_id)));
 				model.addAttribute("mode", "'getreviewhelp'");
 				pagingModelReply(model, request, bookname);
 				model.addAttribute("reviewreplylist", productServiceImpl.getReviewReply(bookname));
 				return "/menu/getreviewhelp";
 			} else {
-				logger.info("reviewmode : " + reviewmode.equals("getreviewlatest"));
 				model.addAttribute("good", productServiceImpl.getProductDetails(Integer.valueOf(goods_id)));
 				model.addAttribute("mode", "'getreviewlatest'");
 				pagingModelReplyLatest(model, request, bookname);
@@ -149,51 +140,6 @@ public class MallController {
 		model.addAttribute("list", shoppingbaskets);
 		model.addAttribute("User", user);
 		return "/order/shoppingbasketdesign";
-	}
-
-	public static String getToken(JSONObject json, String requestURL) {
-		String _token = "";
-		try {
-			String requestString = "";
-			URL url = new URL(requestURL);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setDoOutput(true);
-			connection.setInstanceFollowRedirects(false);
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			OutputStream os = connection.getOutputStream();
-			os.write(json.toString().getBytes());
-			connection.connect();
-			StringBuilder sb = new StringBuilder();
-			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-				br.close();
-				requestString = sb.toString();
-			}
-			os.flush();
-			connection.disconnect();
-			try {
-				JSONParser jsonParser = new JSONParser();
-				JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
-				if ((Long) jsonObj.get("code") == 0) {
-					logger.info("jsonObj : " + jsonObj);
-					JSONObject getToken = (JSONObject) jsonObj.get("response");
-					logger.info("getToken : " + getToken);
-					logger.info("getToken.get('access_token') : " + getToken.get("access_token"));
-					_token = (String) getToken.get("access_token");
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			_token = "";
-		}
-		return _token;
 	}
 
 	private int getamount(String merchant_uid) {		// 주문 총액
@@ -215,262 +161,6 @@ public class MallController {
 		return "/order/orderresult";
 	}
 
-	@RequestMapping(value = "/iamport-webhook", method = RequestMethod.POST) // 고객이 무통장 입금으로 결제를 하거나,가상 계좌에 금액을 넣었을때 발생
-	public void webhook(@RequestParam(required = false) String imp_uid,		 // 다른 결제 수단은 웹훅 사용 안함
-			@RequestParam(required = false) String merchant_uid, HttpServletRequest request,
-			HttpServletResponse response, @RequestParam(required = false) String status, Model model) {
-		if (status != null && !status.equals("paid")) // 가상계좌에 입금했거나 결제 완료
-			return;
-		int webhookflag = 0;
-		Order order = orderServiceImpl.getMerchantId(merchant_uid);
-		if (!order.getPaymethod().equals("vbank")) {
-			webhookflag = 0;
-			logger.info("아임포트 서버 요청 stopping.");
-			return;
-		} else {
-			webhookflag = 1;
-		}
-		if (webhookflag == 1) {
-			try {
-				JSONObject json = new JSONObject();
-				String imp_key = URLEncoder.encode("2645427372556228", "UTF-8");
-				String imp_secret = URLEncoder.encode(
-						"75USkRpzuQ8T8WeQcJrO1GFKEERYRDAYIuR2lgCQ6LKfHY5THxIJenuS2mRTZsSHWJKiZm967TlPRrJz", "UTF-8");
-				json.put("imp_key", imp_key);
-				json.put("imp_secret", imp_secret);
-				String token = getToken(json, "https://api.iamport.kr/users/getToken");
-				JSONObject getdata = null;
-				try {
-					String requestString = "";
-					URL url = new URL("https://api.iamport.kr/payments/" + imp_uid);
-					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-					connection.setDoOutput(true);
-					connection.setInstanceFollowRedirects(false);
-					connection.setRequestMethod("GET");
-					connection.setRequestProperty("Authorization", token);
-					OutputStream os = connection.getOutputStream();
-					connection.connect();
-					StringBuilder sb = new StringBuilder();
-					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-						BufferedReader br = new BufferedReader(
-								new InputStreamReader(connection.getInputStream(), "utf-8"));
-						String line = null;
-						while ((line = br.readLine()) != null) {
-							sb.append(line + "\n");
-						}
-						br.close();
-						requestString = sb.toString();
-					}
-					os.flush();
-					connection.disconnect();
-					JSONParser jsonParser = new JSONParser();
-					JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
-					logger.info("반환된 JSON객체 : {}" + jsonObj);
-					if ((Long) jsonObj.get("code") == 0) {
-						getdata = (JSONObject) jsonObj.get("response"); // 이전에 책을 주문 할때,무통장 입금 신청을 했던 정보를 다시 가져옴
-						logger.info(
-								"getwebhookresponsedata(아임포트 서버로부터 가져온 결제 정보 -> 다른 결제 방식과 무통장 입금 결제 방식의 결제 정보들도 있음.) ==>> {}",
-								getdata);
-						int bepaid = getamount(merchant_uid);
-						String amount = String.valueOf(getdata.get("amount"));
-						String mystatus = String.valueOf(getdata.get("status"));
-						if (String.valueOf(getdata.get("vbank_num")) == null) // 무통장 입금이 아니면 webhook을 종료시킨다. -> 무통장 입금만
-							return;											  // 웹훅을 사용할 것이기 때문이다.
-						String vbankholder = String.valueOf(getdata.get("vbank_holder"));
-						String vbanknum = String.valueOf(getdata.get("vbank_num"));
-						String vbankcode = String.valueOf(getdata.get("vbank_code"));
-						String paymethod = String.valueOf(getdata.get("pay_method"));
-
-						Vbank vbank = new Vbank();
-						vbank.setVbanknum(vbanknum);
-						vbank.setVbankholder(vbankholder);
-						vbank.setVbankcode(vbankcode);
-
-						Order vbankorder = new Order();
-						vbankorder.setMerchant_id(merchant_uid);
-						vbankorder.setStatus(mystatus);
-						vbankorder.setImp_uid(imp_uid);
-						vbankorder.setPaymethod(paymethod);
-						vbankorder.setPrice(bepaid);
-
-						if (bepaid <= Integer.valueOf(amount) && vbanknum != null) {
-							switch (mystatus) {
-							case "paid": // 무통장 입금만 해당...
-								orderServiceImpl.updateStatusWebhook(vbankorder, vbank); // 결제 완료로 바꾸기
-							}
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@RequestMapping("/mobile")	// IMPORT 서버에서 카드사 서버로 결제가 완료된 이후에 쇼핑몰 서버에 결제 정보를 돌려주고 Redirect 될 URL(Mobile기기로 결제했을때만)
-	public String mobile(@RequestParam String coupon, @RequestParam String imp_uid, @RequestParam String merchant_uid,
-			HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam String[] booknamelist,
-			@RequestParam Integer[] bookqtylist, @RequestParam String amount, HttpSession session) {
-		String referer = (String) request.getHeader("REFERER");		// REFERER 사용 이유 : 사용자가 만약에 주문 도중에 뒤로 가기 버튼을 누르게 되면,
-		logger.info("referer : {}", referer);						// 				      정확한 주문이 DB에 저장이 안될수 있기 때문에 사전에 차단하기 위함
-		try {
-			JSONObject json = new JSONObject();
-			orderServiceImpl.insertPrice(amount, merchant_uid);
-			String imp_key = URLEncoder.encode("2645427372556228", "UTF-8");
-			String imp_secret = URLEncoder.encode(
-					"75USkRpzuQ8T8WeQcJrO1GFKEERYRDAYIuR2lgCQ6LKfHY5THxIJenuS2mRTZsSHWJKiZm967TlPRrJz", "UTF-8");
-			json.put("imp_key", imp_key);
-			json.put("imp_secret", imp_secret);
-			logger.info("Before getToken sessionId : {}", session.getId());
-			String token = getToken(json, "https://api.iamport.kr/users/getToken");
-			logger.info("After getToken sessionId : {}", session.getId());
-			JSONObject getdata = null;
-			try {
-				String requestString = "";
-				URL url = new URL("https://api.iamport.kr/payments/" + imp_uid);
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-				connection.setDoOutput(true);
-				connection.setInstanceFollowRedirects(false);
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Authorization", token);
-				OutputStream os = connection.getOutputStream();
-				connection.connect();
-				StringBuilder sb = new StringBuilder();
-				if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
-					String line = null;
-					while ((line = br.readLine()) != null) {
-						sb.append(line + "\n");
-					}
-					br.close();
-					requestString = sb.toString();
-				}
-				os.flush();
-				connection.disconnect();
-				JSONParser jsonParser = new JSONParser();
-				JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
-				logger.info("After Payment sessionId : {}", session.getId());
-				logger.info("jsonObj {}", jsonObj);
-				if ((Long) jsonObj.get("code") == 0) {
-					getdata = (JSONObject) jsonObj.get("response");
-					logger.info("getmobileresponsedata : {}", getdata);
-					int bepaid = getamount(merchant_uid);
-					String getamount = String.valueOf(getdata.get("amount"));
-					String mystatus = String.valueOf(getdata.get("status"));
-					String paymethod = String.valueOf(getdata.get("pay_method"));
-					logger.info("getamount(아임포트 서버에서 온 결제 금액) : {}", getamount);
-					logger.info("mobile bepaid <= getamount  : {}", (bepaid <= Integer.valueOf(getamount)));
-					logger.info("mobile mystatus : {}", mystatus);
-					SecurityContextHolder sch = new SecurityContextHolder();
-					logger.info("SecurityContextHolder : {}", sch);
-					logger.info("SecurityContext : {}", sch.getContext());
-					logger.info("Authentication : {}", sch.getContext().getAuthentication());
-
-					if (mystatus.equals("paid")
-							&& referer.contains("https://ksmobile.inicis.com/smart/mobileAcsCancel")) {
-						return "redirect:/showbasket";
-					}
-					if (bepaid <= Integer.valueOf(getamount) && merchant_uid.equals(getdata.get("merchant_uid"))) {
-						switch (mystatus) {
-						case "ready":
-							SimpleDateFormat timeformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-							Calendar time = Calendar.getInstance();
-							String vbank_num = String.valueOf(getdata.get("vbank_num"));
-							String vbank_code = String.valueOf(getdata.get("vbank_code"));
-							String vbank_date = timeformat.format(time.getTime());
-							String vbank_name = String.valueOf(getdata.get("vbank_name"));
-							String vbank_holder = String.valueOf(getdata.get("vbank_holder"));
-							String vbank_person = String.valueOf(getdata.get("buyer_name"));
-
-							Vbank vbank = new Vbank();
-							vbank.setVbanknum(vbank_num);
-							vbank.setVbankname(vbank_name);
-							vbank.setVbankdate(vbank_date);
-							vbank.setVbankholder(vbank_holder);
-							vbank.setVbankcode(vbank_code);
-
-							Order vbankorder = new Order();
-							vbankorder.setMerchant_id(merchant_uid);
-							vbankorder.setName((String) getdata.get("buyer_name"));
-							vbankorder.setStatus((String) getdata.get("status"));
-							vbankorder.setImp_uid(imp_uid);
-							vbankorder.setPaymethod(paymethod);
-							vbankorder.setPrice(Integer.valueOf(getamount));
-							vbankorder.setCouponid(coupon);
-
-							if (orderServiceImpl.mobileCheckByMerchantUid(merchant_uid)) {
-								model.addAttribute("vbank_date", vbank_date);
-								model.addAttribute("vbank_holder", vbank_holder); // 구매자
-								model.addAttribute("vbank_num",
-										orderServiceImpl.getVbankInfo(merchant_uid).getVbanknum()); // 은행 계좌번호
-								model.addAttribute("vbank_name", vbank_name); // 은행 이름
-								model.addAttribute("vbank_code", vbank_code);
-								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
-								model.addAttribute("method", "mobile");
-								return "/order/orderresult";
-							}
-							int vbankinsertcheck = orderServiceImpl.InsertVbankAndUpdateStatus(vbankorder, vbank,
-									booknamelist, bookqtylist);
-							if (vbankinsertcheck == 1) {
-								model.addAttribute("vbank_date", vbank_date);
-								model.addAttribute("vbank_holder", vbank_holder); // 구매자
-								model.addAttribute("vbank_num",
-										orderServiceImpl.getVbankInfo(merchant_uid).getVbanknum()); // 은행 계좌번호
-								model.addAttribute("vbank_name", vbank_name); // 은행 이름
-								model.addAttribute("vbank_code", vbank_code);
-								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
-								model.addAttribute("method", "mobile");
-								return "/order/orderresult";
-							} else {
-								return "/error/404code";
-							}
-						case "paid":
-							Order order = new Order();
-							order.setMerchant_id(merchant_uid);
-							order.setName((String) getdata.get("buyer_name"));
-							order.setStatus((String) getdata.get("status"));
-							order.setImp_uid(imp_uid);
-							order.setPaymethod(paymethod);
-							order.setPrice(Integer.valueOf(getamount));
-							order.setCouponid(coupon);
-
-							if (orderServiceImpl.mobileCheckByMerchantUid(merchant_uid)) {
-								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
-								model.addAttribute("method", "mobile");
-								return "/order/orderresult";
-							}
-							int paidcheck = orderServiceImpl.updateStatusAndOrder(order, booknamelist, bookqtylist);
-							if (paidcheck == 1) {
-								model.addAttribute("Order", orderServiceImpl.getMerchantId(merchant_uid));
-								model.addAttribute("Ordergoods", orderServiceImpl.getOrderGoods(merchant_uid));
-								model.addAttribute("method", "mobile");
-								return "/order/orderresult";
-							} else {
-								return "/error/404code";
-							}
-						case "failed":
-							logger.info("mystatus : failed");
-							orderServiceImpl.deleteMerchantId((String) getdata.get("merchant_uid"));
-							return "redirect:/showbasket";
-						}
-					} else {
-						return "mobilefailed";
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	@RequestMapping("/showorder")		// 사용자가 주문했던 내역 페이지
 	public String showorder(HttpServletRequest request, HttpSession session, Model model) throws Exception {
 		String id = (String) session.getAttribute("Userid");
@@ -482,7 +172,6 @@ public class MallController {
 		else
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
 		pagingRefactoringForOrder(curPageNum, request, model, id);	// 고객의 주문 내역을 보는 페이지가 속한 Block의 첫번째 숫자와 마지막 숫자를 모델의 속성값을 넣음 -> 페이징 처리
-		logger.info("{}가 주문 내역 페이지를 확인",id);
 		List<Order> orders = orderServiceImpl.getOrderInfo(id, curPageNum); // ordertable의 주문 데이터들
 		model.addAttribute("orders", orders);
 		List<List<Ordergoods>> ordergoods = new ArrayList<List<Ordergoods>>();
@@ -490,8 +179,6 @@ public class MallController {
 		for (int i = 0; i < orders.size(); i++) {
 			ordergoods.add(orderServiceImpl.getOrderGoods(orders.get(i).getMerchant_id())); // 주문 번호로 시킨 책들
 			vbanks.add(orderServiceImpl.getVbankInfo(orders.get(i).getMerchant_id()));
-			logger.info("vbanks : {}", vbanks);
-			logger.info("orders.get(i).getMerchant_id() : {}", orders.get(i).getMerchant_id());
 		}
 		model.addAttribute("ordergoods", ordergoods);
 		model.addAttribute("vbanks", vbanks);
@@ -504,8 +191,6 @@ public class MallController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; 	// 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : {}", page);
-		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforOrder(curPageNum, model, id);
 		return curPageNum;
 	}
@@ -513,9 +198,6 @@ public class MallController {
 	@RequestMapping("/search")				// 책을 찾기 위한 URL
 	public String search(@RequestParam String subject, @RequestParam(value = "search", required = false) String search,
 			HttpServletRequest request, Model model) {
-		logger.info("search : {}", search == null);
-		logger.info("search : {}", search == "");
-		logger.info("search : {}", search == " ");
 		pagingModelKwd(subject, search, request, model);
 		model.addAttribute("search", search);
 		model.addAttribute("subject", subject);
@@ -555,8 +237,6 @@ public class MallController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; 	// 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : {}", page);
-		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforKwd(curPageNum, model, subject, search);
 		return curPageNum;
 	}
@@ -578,8 +258,6 @@ public class MallController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : {}", page);
-		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforBook(curPageNum, model, bigclass, subclass);
 		return curPageNum;
 	}
@@ -600,8 +278,6 @@ public class MallController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : {}", page);
-		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforCoupon(curPageNum, model, Id);
 		return curPageNum;
 	}
@@ -612,7 +288,6 @@ public class MallController {
 		int curPageNum = 0; // 현재 사용자가 보는 페이지
 		curPageNum = pagingRefactoringForReply(curPageNum, request, model, bookname);
 		List<Reply> list = paging.reply(curPageNum, bookname);
-		logger.info("list : {}", list);
 		model.addAttribute("list", list);
 		model.addAttribute("reviewlist", replyServiceImpl.getAllReply(bookname));
 		return model;
@@ -624,8 +299,6 @@ public class MallController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; // 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : {}", page);
-		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforReply(curPageNum, model, bookname);
 		return curPageNum;
 	}
@@ -633,9 +306,7 @@ public class MallController {
 	private Model pagingModelReplyLatest(Model model, HttpServletRequest request, String bookname) {	// 특정 책의 리뷰 댓글 중에 최신순에 해당하는 댓글 리뷰를 DB에 조회하여 모델을 반환
 		int curPageNum = 0; // 현재 사용자가 보는 페이지
 		curPageNum = pagingRefactoringForReplyLatest(curPageNum, request, model, bookname);
-		logger.info("curPageNum refactoring : {}", curPageNum);
 		List<Reply> list = paging.replylatest(curPageNum, bookname);
-		logger.info("list : {}", list);
 		model.addAttribute("list", list);
 		model.addAttribute("reviewlist", replyServiceImpl.getAllReply(bookname));
 		return model;
@@ -648,8 +319,6 @@ public class MallController {
 			curPageNum = Integer.valueOf(page);
 		else
 			curPageNum = 1; 	// 처음 페이지에 들어가는 경우(페이징 처리된 페이지를 누르지 않았을 경우)
-		logger.info("page : {}", page);
-		logger.info("curPageNum : {}", curPageNum);
 		paging.pagingforReplyLatest(curPageNum, model, bookname);
 		return curPageNum;
 	}

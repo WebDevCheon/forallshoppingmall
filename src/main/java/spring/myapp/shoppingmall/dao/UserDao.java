@@ -1,7 +1,9 @@
 package spring.myapp.shoppingmall.dao;
 
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -10,9 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import spring.myapp.shoppingmall.dto.User;
 
 @Repository
+@Transactional
 public class UserDao {
 	private static final Logger logger = LoggerFactory.getLogger(UserDao.class);
 

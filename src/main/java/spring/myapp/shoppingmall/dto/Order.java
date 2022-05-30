@@ -20,8 +20,8 @@ import lombok.ToString;
 @Table(name = "ordertable")
 public class Order{
 	@Id
-	private int orderid;
-	private String merchant_id;
+	private int orderid;		// 주문 번호(DB PK)
+	private String merchant_id;		// 아임포트 서버에서 결제할 ID
 	private String phoneNumber;
 	private String address;
 	private int price;

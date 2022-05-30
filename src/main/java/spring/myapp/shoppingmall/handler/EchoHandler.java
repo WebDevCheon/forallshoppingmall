@@ -25,22 +25,18 @@ public class EchoHandler extends TextWebSocketHandler {		// À¯ÀúÀÇ ÄíÆù ¾Ë¶÷ ±â´
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		String senderId = getId(session);  //»ç¿ëÀÚÀÇ ID¸¦ ¹ÝÈ¯
 		userSessions.put(senderId,session);  //»ç¿ëÀÚÀÇ ID¸¦ ¾ÆÀÌµð : session °´Ã¼ ½ÄÀ¸·Î mapping
-		logger.info("{}",session.getAttributes().get("Userid"));
 		logger.info("senderId : " + senderId);
 		logger.info("userSessions : " + userSessions.toString());
 		logger.info("¿¬°á ¼º°ø");
-		logger.info("{}",couponAlarmChecklist.get(senderId));
 		if(couponAlarmChecklist.get(senderId) == null)
 			couponAlarmChecklist.put(senderId,0);
 	}
 
 	private String getId(WebSocketSession session) {
 		Map<String,Object> httpSession = session.getAttributes();
-		logger.info("{}",httpSession);
 		String loginUser = (String)httpSession.get("Userid");
-		if(loginUser == null) {
+		if(loginUser == null)
 			return session.getId();
-		}
 		else
 			return loginUser;
 	}
@@ -53,11 +49,9 @@ public class EchoHandler extends TextWebSocketHandler {		// À¯ÀúÀÇ ÄíÆù ¾Ë¶÷ ±â´
 		String[] strs = message.getPayload().split(",");  //admin,makecoupon
 		if(strs.length == 1) {  
 			if(couponAlarmChecklist.get(userid) == 1) {  //ÄíÆùÀ» Àü¿¡ È®ÀÎ ÇßÀ»¶§
-				logger.info("strs.length == 1 Ã¹¹øÂ° : " + couponServiceImpl.getCouponsCountByUserId(userid));
 				return;
 			} else {  //ÄíÆùÀ» ¾ÆÁ÷ È®ÀÎ ¾ÈÇÑ °æ¿ì
 				int canreceivecouponcount = couponServiceImpl.getCouponsCountByUserId(userid);
-				logger.info("strs.length == 1 µÎ¹øÂ° : " + couponServiceImpl.getCouponsCountByUserId(userid));
 				if(canreceivecouponcount > 0) {
 					session.sendMessage(new TextMessage("¹ÞÀ» ¼ö ÀÖ´Â ÄíÆù °³¼ö°¡ " + canreceivecouponcount + "°³°¡ ÀÖ½À´Ï´Ù."));
 					couponAlarmChecklist.put(userid,1);
@@ -65,8 +59,6 @@ public class EchoHandler extends TextWebSocketHandler {		// À¯ÀúÀÇ ÄíÆù ¾Ë¶÷ ±â´
 			} 
 		} else {  //ÄíÆùÀ» ¹ÞÀº °æ¿ì (ÄíÆù ¹Þ±â¸¦ ´­·¶À»¶§)
 			couponAlarmChecklist.put(strs[0],null);
-			logger.info("{}",couponAlarmChecklist.get(userid));
-			logger.info(couponAlarmChecklist.toString());
 		}
 	}
 	// Å¬¶óÀÌ¾ðÆ®¿Í ¿¬°áÀ» ²÷¾úÀ» ¶§ ½ÇÇàµÇ´Â ¸Þ¼Òµå

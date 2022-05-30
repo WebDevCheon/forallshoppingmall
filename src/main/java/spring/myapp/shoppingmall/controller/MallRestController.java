@@ -38,8 +38,8 @@ import spring.myapp.shoppingmall.service.ShoppingBasketImpl;
 import spring.myapp.shoppingmall.service.UserServiceImpl;
 
 @RestController
-public class ShoppingmallRestContoller {
-	private static final Logger logger = LoggerFactory.getLogger(ShoppingmallRestContoller.class);
+public class MallRestController {
+	private static final Logger logger = LoggerFactory.getLogger(MallRestController.class);
 	
 	@Autowired
 	private ShoppingBasketImpl shoppingBasketImpl;
@@ -64,7 +64,6 @@ public class ShoppingmallRestContoller {
 	
 	@PostMapping(value = "/cart")	// 책 한권의 상세보기 창에서 주문하기 또는 장바구니 버튼을 눌렀을때,DB에 그 책의 이름과 수량을 카트에 Insert
 	public void cart(Shoppingbasket cart,@RequestParam String userid,@RequestParam int goods_id){
-		logger.info("{}",userid);
 		logger.info("카트로 담은 책의 이름,카트로 담은 책의 수량 : {},{}",cart.getName(),cart.getQty());
 		logger.info("책의 가격 : {}",cart.getPrice());
 		shoppingBasketImpl.setShoppingBasket(cart.getQty(),goods_id,cart.getPrice(),userid,cart.getName());  //카트 담기
@@ -116,7 +115,6 @@ public class ShoppingmallRestContoller {
 	public boolean unitInStockShortageCheck(@RequestBody HashMap<String,Object> map) {
 		List<String> booknamelist = (ArrayList<String>)(map.get("booknamelist"));
 		List<Integer> bookqtylist = (ArrayList<Integer>)(map.get("bookqtylist"));
-		logger.info("booknamelist : {}",booknamelist);
 		String merchant_id = (String)map.get("merchant_uid");
 		return orderServiceImpl.unitInStockCheck(booknamelist,bookqtylist,merchant_id); 
 	}
@@ -176,7 +174,6 @@ public class ShoppingmallRestContoller {
 				//FileOutputStream fos = new FileOutputStream("/opt/tomcat/webapps/ROOT/reviewupload/" +  str_filename);  // aws 파일 시스템
 				fos.write(data);
 				fos.close();
-				logger.info("reivewimage str_filename : {}",str_filename);
 				File multitofile = convertFromMultipartToFile(str_filename,"review");
 				//awsServiceImpl.s3FileUpload(multitofile,"review");  //리뷰 댓글에 파일 업로드 이미지 aws s3에 업로드
 				//json.put("url","https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/reviewimage/" + str_filename);
@@ -194,12 +191,12 @@ public class ShoppingmallRestContoller {
 		if(whatupload.equals("book")) {
 			File file = new File("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\goodsimgUpload\\" + filename);
 			//File file = new File("/opt/tomcat/webapps/ROOT/upload/" +  filename);
-			logger.info("File upload : {}",filename);
+			logger.info("File upload name -> {}",filename);
 			return file;
 		} else {
 			File file = new File("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\reviewUpload\\" + filename);
 			//File file = new File("/opt/tomcat/webapps/ROOT/reviewupload/" +  filename);
-			logger.info("File reviewimag : {}",filename);
+			logger.info("File reviewimage name -> {}",filename);
 			return file;
 		}
 	}
@@ -226,8 +223,6 @@ public class ShoppingmallRestContoller {
 	@PostMapping("/productrecommend")  //책 추천하기
 	public int productrecommend(Bookrecommend bookrecommend,@RequestParam int bookid,HttpSession session) {
 		String userid = (String)session.getAttribute("Userid");
-		logger.info("recommend bookid : {}",bookrecommend.getBook_id());
-		logger.info("int bookid : {}",bookid);
 		bookrecommend.setUserid(userid);
 		return productServiceImpl.bookRecommend(bookrecommend,userid,bookid);
 	}
@@ -262,7 +257,6 @@ public class ShoppingmallRestContoller {
 		String bookname = (String)map.get("bookname");
 		String reviewContent = (String)map.get("reviewContent");
 		int rid = (Integer)map.get("rid");  //rid는 리뷰의 아이디
-		logger.info("content : {}",reviewContent);
 		ReviewReply userreview = new ReviewReply();
 		userreview.setUser_id(user_id);
 		userreview.setBookname(bookname);
@@ -285,9 +279,9 @@ public class ShoppingmallRestContoller {
 		File file = new File("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\reviewUpload\\" + (replyServiceImpl.getReviewByReviewId(reviewid).getImgfileurl().split("/"))[arr.length-1]);
 		//File file = new File("/opt/tomcat/webapps/ROOT/reviewupload/" + (replyServiceImpl.getreviewbyrid(reviewid).getImgfileurl().split("/"))[arr.length-1]);
 		if(file.delete())
-			logger.info("reviewupload file 삭제");
+			logger.info("리뷰 업로드 파일 삭제");
 		else
-			logger.info("reviewupload file 파일 삭제 실패");
+			logger.info("리뷰 업로드 파일 삭제 실패");
 		replyServiceImpl.reviewDelete(reviewid);
 	}
 	

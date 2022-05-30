@@ -408,7 +408,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
     <script type="text/javascript" src="http://www.turnjs.com/lib/turn.min.js"></script>
 	<script>
-	function goPopup(){
+	function goPopup() {
 	    var pop = window.open("${pageContext.request.contextPath}/jusoPopup","pop","width=570,height=420, scrollbars=yes, resizable=yes"); 
 	}
 	function jusoCallBack(roadFullAddr,roadAddrPart1,addrDetail,roadAddrPart2,engAddr, jibunAddr, zipNo, admCd, rnMgtSn, bdMgtSn
@@ -463,13 +463,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		bookqtylist = <%=goodsqty%>
 		console.log(booknamelist);
 		console.log(bookqtylist);
-	</script>
-	<script>
-	/*
-		if("${check}" != ""){
-			location.href = "/shoppingmall/showbasket";
-		}
-	*/
 	</script>
 	<script>
 	function noEvent() {

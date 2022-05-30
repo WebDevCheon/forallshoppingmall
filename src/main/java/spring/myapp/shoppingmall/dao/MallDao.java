@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -11,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import spring.myapp.shoppingmall.dto.Bookrecommend;
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
@@ -28,6 +31,7 @@ import spring.myapp.shoppingmall.dto.User;
 import spring.myapp.shoppingmall.dto.Vbank;
 
 @Repository
+@Transactional
 public class MallDao {
 	private static final Logger logger = LoggerFactory.getLogger(MallDao.class);
 
@@ -228,35 +232,31 @@ public class MallDao {
 		query.setParameter("price",price);
 		query.setParameter("merchant_id",merchant_uid);
 		query.executeUpdate();
-		logger.info("insertPrice 메소드 성공");
 	}
 	
 	public int getfindprice(String merchant_uid) {
 		Session session = getSession();
 		Query query = session.createQuery("from Order where merchant_id = :merchant_id");
 		query.setParameter("merchant_id",merchant_uid);
-		logger.info("merchant_id check : {}",merchant_uid);
 		Order order = (Order)query.getSingleResult();
 		return order.getPrice();
 	}
 	
 	public void statusupdate(String updatestatus,String merchant_uid,String imp_uid,String paymethod) {
-		logger.info("무통장 입금 결제 상태 변화");
 		Session session = getSession();
-			if(imp_uid != null) {
-				Query query = session.createQuery("update Order set status = :status,imp_uid = :imp_uid,paymethod = :paymethod where merchant_id = :merchant_id");
-				query.setParameter("status",updatestatus);
-				query.setParameter("imp_uid",imp_uid);
-				query.setParameter("paymethod",paymethod);
-				query.setParameter("merchant_id",merchant_uid);
-				query.executeUpdate();
-			} else {
-				Query query = session.createQuery("update Order set status = :status where merchant_id = :merchant_id");
-				query.setParameter("status",updatestatus);
-				query.setParameter("merchant_id",merchant_uid);
-				query.executeUpdate();
-			}
-			logger.info("statusupdate 메소드 성공");
+		if(imp_uid != null) {			// 결제할때의 주문 상태를 변화	
+			Query query = session.createQuery("update Order set status = :status,imp_uid = :imp_uid,paymethod = :paymethod where merchant_id = :merchant_id");
+			query.setParameter("status",updatestatus);
+			query.setParameter("imp_uid",imp_uid);
+			query.setParameter("paymethod",paymethod);
+			query.setParameter("merchant_id",merchant_uid);
+			query.executeUpdate();
+		} else {						// 환불할때의 주문 상태를 변화
+			Query query = session.createQuery("update Order set status = :status where merchant_id = :merchant_id");
+			query.setParameter("status",updatestatus);
+			query.setParameter("merchant_id",merchant_uid);
+			query.executeUpdate();
+		}
 	}
 	
 	public Order getMerchantid(String merchant_id) {
@@ -388,7 +388,7 @@ public class MallDao {
 		query.setParameter("merchant_id",merchant_uid);
 		List<Ordergoods> ordergoodslist = query.getResultList();
 		
-		for(int j=0; j < ordergoodslist.size();j++) {
+		for(int j = 0;j < ordergoodslist.size();j++) {
 			Query<Order> selectOrder = session.createQuery("from Order where merchant_id = :merchant_id",Order.class);
 			selectOrder.setParameter("merchant_id",merchant_uid);
 			ordergoodslist.get(j).setOrderid(selectOrder.getSingleResult());
@@ -495,29 +495,6 @@ public class MallDao {
 		logger.info("{}",user.getName());
 		logger.info("{}",user.getCarts());
 		return user.getCarts().size();
-	}
-	
-	public void rollbackdeletemerchantid(String merchant_id) {
-		Session session = getSession();
-		Query query = session.createQuery("delete from Ordergoods where merchant_id = :merchant_id");
-		query.setParameter("merchant_id",merchant_id);
-		query.executeUpdate();
-		query = session.createQuery("delete from Order where merchant_id = :merchant_id");
-		query.setParameter("merchant_id",merchant_id);
-		query.executeUpdate();
-	}
-	
-	public void rollbackdeletevbankmerchantid(String merchant_id) {
-		Session session = getSession();
-		Query query = session.createQuery("delete from Ordergoods where merchant_id = :merchant_id");
-		query.setParameter("merchant_id",merchant_id);
-		query.executeUpdate();
-		query = session.createQuery("delete from Vbank where merchant_id = :merchant_id");
-		query.setParameter("merchant_id",merchant_id);
-		query.executeUpdate();
-		query = session.createQuery("delete from Order where merchant_id = :merchant_id");
-		query.setParameter("merchant_id",merchant_id);
-		query.executeUpdate();
 	}
 	
 	public Integer usecoupon(String cnumber) {  //쿠폰 사용 버튼을 누름으로써,어떤 종류의 쿠폰이 사용되었는지 확인하여 그만큼 액수를 감소
@@ -727,11 +704,10 @@ public class MallDao {
 	public int usedcouponcheckmethod(String couponid) {  //사용된 쿠폰인지 확인
 		Session session = getSession();
 		Coupon whetherusedcoupon = session.get(Coupon.class,couponid);
-		if(whetherusedcoupon.getUsecheck().equals("yes")) {
+		if(whetherusedcoupon == null || whetherusedcoupon.getUsecheck().equals("yes"))
 			return 1;
-		} else {
+		else
 			return 0;
-		}
 	}
 
 	public int bookrecommend(Bookrecommend recommend,int bookid) {
