@@ -3,11 +3,14 @@ package spring.myapp.shoppingmall.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.dto.Reply;
 import spring.myapp.shoppingmall.dto.ReviewReply;
 
 @Service
+@Transactional
 public class ReplyServiceImpl implements ReplyService {
 	@Autowired
 	private MallDao Malldao;

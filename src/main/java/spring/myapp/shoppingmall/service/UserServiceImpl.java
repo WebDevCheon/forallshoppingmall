@@ -4,11 +4,13 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import spring.myapp.shoppingmall.dao.UserDao;
 import spring.myapp.shoppingmall.dto.User;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserDao Userdao;

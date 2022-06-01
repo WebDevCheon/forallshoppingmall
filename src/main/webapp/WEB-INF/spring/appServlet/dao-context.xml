@@ -38,4 +38,5 @@
 	</bean>
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
     <context:component-scan base-package="spring.myapp.shoppingmall.dao" />
+    <context:component-scan base-package="spring.myapp.shoppingmall.paging" />
 </beans>

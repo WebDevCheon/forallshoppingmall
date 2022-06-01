@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import spring.myapp.shoppingmall.dto.Bookrecommend;
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
@@ -31,15 +29,15 @@ import spring.myapp.shoppingmall.dto.User;
 import spring.myapp.shoppingmall.dto.Vbank;
 
 @Repository
-@Transactional
 public class MallDao {
 	private static final Logger logger = LoggerFactory.getLogger(MallDao.class);
 
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	private Session getSession() {
-	    return sessionFactory.getCurrentSession();
+	public Session getSession() {
+		Session session = sessionFactory.getCurrentSession();
+		return session;
 	}
 	
 	public List<Goods> getGoodsList() {

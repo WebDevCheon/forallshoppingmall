@@ -12,6 +12,7 @@ import spring.myapp.shoppingmall.dto.ReviewReply;
 import spring.myapp.shoppingmall.dto.Todaybook;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService{
 	@Autowired
 	private MallDao Malldao;
@@ -32,7 +33,6 @@ public class ProductServiceImpl implements ProductService{
 	}
 	
 	@Override
-	@Transactional
 	public int bookRecommend(Bookrecommend recommend,String userid,int bookid) {
 		if(Malldao.bookrecommendcheck(userid,bookid) == 1)
 			return 1;

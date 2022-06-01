@@ -43,10 +43,6 @@
 	<beans:bean id="echoHandler" class="spring.myapp.shoppingmall.handler.EchoHandler"/>
 	
 	<context:component-scan
-		base-package="spring.myapp.shoppingmall.paging" />
-	<context:component-scan
-		base-package="spring.myapp.shoppingmall.service.board" />
-	<context:component-scan
 		base-package="spring.myapp.shoppingmall.security" />
 	<context:component-scan
 		base-package="spring.myapp.shoppingmall.admin" />

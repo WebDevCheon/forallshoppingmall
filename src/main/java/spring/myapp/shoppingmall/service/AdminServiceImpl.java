@@ -12,6 +12,7 @@ import spring.myapp.shoppingmall.dto.Goods;
 import spring.myapp.shoppingmall.dto.Refund;
 
 @Service
+@Transactional
 public class AdminServiceImpl implements AdminService {
 	@Autowired
 	private MallDao Malldao;
@@ -22,7 +23,6 @@ public class AdminServiceImpl implements AdminService {
 	}
 	
 	@Override
-	@Transactional
 	public void updateStatusCancel(String merchant_id,String cancel) {
 		Malldao.statusupdatecancel(merchant_id,cancel);
 	}
@@ -63,7 +63,6 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	@Transactional
 	public void purchaseCancel(HashMap<String, Object> map) {
 		Malldao.purchasecancel(map);
 	}

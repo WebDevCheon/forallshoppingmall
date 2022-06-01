@@ -4,6 +4,8 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
@@ -16,6 +18,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 @Service
+@Transactional
 public class AwsServiceImpl implements AwsService {
 		private static final Logger logger = LoggerFactory.getLogger(AwsServiceImpl.class);
 	 	private static final String BUCKET_NAME = "shoppingmallbucket";

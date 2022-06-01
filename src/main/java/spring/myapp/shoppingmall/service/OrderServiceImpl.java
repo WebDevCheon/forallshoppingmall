@@ -25,20 +25,19 @@ import spring.myapp.shoppingmall.dto.Shoppingbasket;
 import spring.myapp.shoppingmall.dto.Vbank;
 
 @Service
-public class OrderServiceImpl implements OrderService {
+@Transactional
+public class OrderServiceImpl implements OrderService {		// 결제 핵심 코드
 	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
 	@Autowired
 	private MallDao Malldao;
 	
 	@Override
-	@Transactional
 	public void deleteMerchantId(String merchant_id) {
 		Malldao.deltemerchantid(merchant_id);
 	}
 	
 	@Override
-	@Transactional
 	public String getImp_Uid(String merchant_uid){
 		return Malldao.getimp_uid(merchant_uid);
 	}
@@ -49,7 +48,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	@Transactional
 	public int getPriceByMerchantId(String merchant_uid){
 		return Malldao.getfindprice(merchant_uid);
 	}
@@ -65,7 +63,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	@Transactional
 	public Vbank getVbankInfo(String merchant_id){
 		return Malldao.getvbankinfo(merchant_id);
 	}
@@ -97,7 +94,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	@Transactional
 	public int InsertVbankAndUpdateStatus(Order order,Vbank vbank,String[] booknamelist, Integer[] bookqtylist) {	// 무통장 입금으로 고객이 결제를 신청했을때(돈 입금 안된 상태)
 		try {
 			Malldao.insertVbankgoods(order.getMerchant_id(),booknamelist,bookqtylist);	// 처음 가상 계좌 신청했을때 책의 이름/수량을 DB에 insert
@@ -120,7 +116,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	@Transactional
 	public void updateStatusWebhook(Order vbankorder,Vbank vbank) {	// 무통장 가상 계좌에 고객이 돈을 입금했을때	
 		try {
 			Malldao.statusupdate(vbankorder.getStatus(),vbankorder.getMerchant_id(),vbankorder.getImp_uid(),vbankorder.getPaymethod());
@@ -136,7 +131,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	@Transactional
 	public int updateStatusAndOrder(Order order,String[] booknamelist,Integer[] bookqtylist) {	// 결제 완료로 인해서 주문할 책,금액,주문 상태를 update
 			try {
 				Malldao.insertgoods(order.getMerchant_id(),booknamelist,bookqtylist);	// 결제ID를 바탕으로 주문할 책의 이름/수량을 DB에 update
@@ -158,7 +152,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	@Transactional
 	public int orderPayCheck(String Userid,String price,String couponid) {
 		List<Shoppingbasket> shoppingbasketlist = Malldao.getShoppingbasket(Userid);
 		int sum = 0;

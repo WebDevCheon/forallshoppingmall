@@ -21,16 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import spring.myapp.shoppingmall.dto.Order;
 import spring.myapp.shoppingmall.dto.Vbank;
 import spring.myapp.shoppingmall.service.AdminServiceImpl;
@@ -300,7 +297,7 @@ public class PaymentAndRefundController {
 		json.put("imp_key",imp_key);
 		json.put("imp_secret", imp_secret);
 		try {
-			String token = getToken(json,"https://api.iamport.kr/users/getToken");
+			String token = getToken(json,"https://api.iamport.kr/users/getToken");	// 아임포트 서버에 접근 권한 토큰 발급 요청
 			JSONObject getdata = null; //아임포트 서버에서 받아올 json 객체 null로 초기화
 			JSONObject paymentjson = requestPaymentinfo(map,token,getdata,"https://api.iamport.kr/payments/" + (String)map.get("imp_uid"),session);
 			return new ResponseEntity<JSONObject>(paymentjson,HttpStatus.OK);
@@ -354,7 +351,6 @@ public class PaymentAndRefundController {
 		return _token;
 	}
 	
-	@Transactional
 	private JSONObject requestPaymentinfo(HashMap<String,Object> map,String token,JSONObject getdata,String requestURL,
 			HttpSession session) {		// 결제 메소드
 		try{
@@ -498,7 +494,6 @@ public class PaymentAndRefundController {
 	}
 	
 	@PostMapping("/cancel")		// 환불 메소드
-	@Transactional
 	public Map<String,Object> cancel(HttpServletRequest request,HttpServletResponse response,
 			@RequestBody HashMap<String,Object> map) throws Exception{
 		JSONObject json = new JSONObject();

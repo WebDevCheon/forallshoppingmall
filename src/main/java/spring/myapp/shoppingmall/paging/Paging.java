@@ -1,11 +1,14 @@
 package spring.myapp.shoppingmall.paging;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+
 import spring.myapp.shoppingmall.dao.MallDao;
 import spring.myapp.shoppingmall.dto.Coupon;
 import spring.myapp.shoppingmall.dto.Goods;
@@ -13,6 +16,7 @@ import spring.myapp.shoppingmall.dto.Refund;
 import spring.myapp.shoppingmall.dto.Reply;
 
 @Service
+@Transactional
 public class Paging {
 	private static final Logger logger = LoggerFactory.getLogger(Paging.class);
 	@Autowired
