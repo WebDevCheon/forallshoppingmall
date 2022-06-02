@@ -64,11 +64,10 @@ public class MallDao {
 		session.saveOrUpdate(order);
 	}
 	
-	public void setShoppingbasket(int gid,String User_ID,int price,int qty,String name) {	//장바구니 담기 + 주문하기 int gid, 첫번째
+	public void setShoppingbasket(int goods_id,String User_ID,int price,int qty,String name) {	//장바구니 담기 + 주문하기 int gid, 첫번째
 		Session session = getSession();
-		logger.info("setShoppingbasket gid : {}",gid);
 		User user = session.get(User.class,User_ID);
-        Goods goods = (Goods)session.get(Goods.class,gid);
+        Goods goods = (Goods)session.get(Goods.class,goods_id);
         logger.info("goods 조회 완료");
         Shoppingbasket shoppingbasket = new Shoppingbasket();
         shoppingbasket.setUser_id(user);
@@ -81,6 +80,8 @@ public class MallDao {
         goods.getCart().add(shoppingbasket);
         session.saveOrUpdate(shoppingbasket);  
         session.flush();
+        String str = null;
+        str.substring(0,10);
         logger.info("장바구니 저장 완료");
 	}
 	
@@ -133,7 +134,9 @@ public class MallDao {
 		query.executeUpdate();
 	}
 
-	/////////////////////////////////////////페이징 처리///////////////////////////////////////////
+	
+	
+	// 페이징 처리 시작
 	public List<Goods> getsearchinfo(int curPageNum,String search,String subject){
 		if(search == "") {
 			return null;
@@ -192,6 +195,8 @@ public class MallDao {
 		List<Goods> goodslist = query.getResultList(); 
         return goodslist;
 	}
+	// 페이징 처리 끝
+	
 	
 	
 	public int getCount(String kind) {
@@ -224,6 +229,7 @@ public class MallDao {
 		session.delete(shoppingbasket);
 	}
 	
+	@Transactional
 	public void insertPrice(int price,String merchant_uid) {
 		Session session = getSession();	
 		Query query = session.createQuery("update Order set price = :price where merchant_id = :merchant_id");
@@ -240,6 +246,7 @@ public class MallDao {
 		return order.getPrice();
 	}
 	
+	@Transactional
 	public void statusupdate(String updatestatus,String merchant_uid,String imp_uid,String paymethod) {
 		Session session = getSession();
 		if(imp_uid != null) {			// 결제할때의 주문 상태를 변화	
@@ -293,6 +300,7 @@ public class MallDao {
 		query.executeUpdate();
 	}
 	
+	@Transactional
 	public void insertvbank(String merchant_id, String vbanknum, String vbankname, String vbankdate,
 			String vbankholder,String vbankperson,String vbankcode) {
 		Session session = getSession();
@@ -355,6 +363,7 @@ public class MallDao {
 			logger.info("무통장 입금 이외 결제 - insertgoods 메소드 성공");
 	}
 	
+	@Transactional
 	public void insertVbankgoods(String merchant_id, String[] booknamelist, Integer[] bookqtylist) {
 		String name;
 		int qty;
@@ -380,6 +389,7 @@ public class MallDao {
 		logger.info("insertVbankgoods 메소드 성공");
 	}
 	
+	@Transactional
 	public void subordergoodsVbank(String merchant_uid) {
 		Session session = getSession();
 		Query<Ordergoods> query = session.createQuery("from Ordergoods where merchant_id = :merchant_id",Ordergoods.class);
@@ -600,10 +610,10 @@ public class MallDao {
 		}
 	}
 
-	public List<Reply> commentlist(String gId) {
+	public List<Reply> commentlist(String goods_id) {
 		Session session = getSession();
 		Query<Reply> query = session.createQuery("from Reply where gid = :gid order by rid",Reply.class);
-		query.setParameter("gid",gId);
+		query.setParameter("gid",goods_id);
 		List<Reply> replylist = query.getResultList();
 		return replylist;
 	}
@@ -616,7 +626,7 @@ public class MallDao {
 		Newreply.setUser_id(user_id);
 		Newreply.setContent(reply);
 		Newreply.setReviewpoint(0);
-		Query selectgid = session.createQuery("from Goods where name = :name");
+		Query<Goods> selectgid = session.createQuery("from Goods where name = :name");
 		selectgid.setParameter("name",bookname);
 		Goods book = (Goods)selectgid.getSingleResult();
 		Newreply.setGoodsid(book);
@@ -628,7 +638,6 @@ public class MallDao {
 		logger.info("addreview 메소드 실행");
 		Session session = getSession();
 		Query selectbook = session.createQuery("from Goods where name = :name");
-		logger.info("name : {}",reply.getGid());
 		selectbook.setParameter("name",reply.getGid());
 		Goods book = (Goods)selectbook.getSingleResult();
 		reply.setGoodsid(book);
@@ -682,6 +691,7 @@ public class MallDao {
 		}
 	}
 
+	@Transactional
 	public void updatestatususecoupon(String couponid,String merchant_id) {
 		Session session = getSession();
 		Query query = session.createQuery("update Coupon set usecheck = :usecheck where id = :id");
@@ -1077,5 +1087,4 @@ public class MallDao {
 		}
 		return checkflag;
 	}
-	
 }
