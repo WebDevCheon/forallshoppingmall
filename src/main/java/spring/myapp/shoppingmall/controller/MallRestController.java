@@ -64,26 +64,18 @@ public class MallRestController {
 	
 	@PostMapping(value = "/cart")	// 책 한권의 상세보기 창에서 주문하기 또는 장바구니 버튼을 눌렀을때,DB에 그 책의 이름과 수량을 카트에 Insert
 	public void cart(Shoppingbasket cart,@RequestParam String userid,@RequestParam int goods_id){
-		logger.info("카트로 담은 책의 이름,카트로 담은 책의 수량 : {},{}",cart.getName(),cart.getQty());
-		logger.info("책의 가격 : {}",cart.getPrice());
+		logger.info("장바구니 정보 : " + cart);
 		shoppingBasketImpl.setShoppingBasket(cart.getQty(),goods_id,cart.getPrice(),userid,cart.getName());  //카트 담기
 	}
 	
 	@RequestMapping(value = "/shoppingbasket",method = RequestMethod.POST)	// 책의 아이디,책의 개수를 DB의 사용자 아이디의 장바구니에 Insert -> /cart와 차이는 JSON으로 데이터를 받느냐 안받느냐의 차이
 	public ResponseEntity<String> shoppingbasket(@RequestBody HashMap<String,Object> map,HttpSession session){	// 공부 해보기 위해서 /cart와 같은 기능을 작성
-		   int qty;
-		   String TypeCheck = map.get("qty").getClass().getName();
-		   if(TypeCheck.equals("java.lang.String"))
-			   qty = Integer.valueOf((String)map.get("qty"));
-		   else
-			   qty = ((Double)map.get("qty")).intValue();
 		   String UserId = (String)(session.getAttribute("Userid"));
 		   int goods_id = Integer.valueOf((String)map.get("goods_id"));		// 책의 ID
 		   int price = Integer.valueOf((String)map.get("price"));			// 책의 가격
+		   int qty = Integer.valueOf((String)map.get("qty"));
 		   String name = (String)map.get("name");
-		   logger.info("책의 이름 : {},유저의 이름 : {}",goods_id,UserId);
-		   logger.info("책의 이름 - 책의 수량 : {},{}",name,qty);
-		   logger.info("책의 가격 : {}",price);
+		   logger.info("주문하고자 하는 책 정보 : " + map);
 		   shoppingBasketImpl.setShoppingBasket(qty, goods_id,price,UserId,name);  //카트 담기
 		   return new ResponseEntity<String>("yes",HttpStatus.CREATED);
 	}
