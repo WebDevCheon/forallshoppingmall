@@ -10,10 +10,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
@@ -28,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import spring.myapp.shoppingmall.dto.Order;
 import spring.myapp.shoppingmall.dto.Vbank;
 import spring.myapp.shoppingmall.service.AdminServiceImpl;
@@ -289,6 +294,33 @@ public class PaymentAndRefundController {
 		return null;
 	}
 	
+	@PostMapping("/InsertMerchantId")	// 결제창을 눌렀을때 미리 DB에 주문에 대하여 DB 정보를 삽입함,주문 취소되면 삭제됨
+	@ResponseBody
+	public ResponseEntity<String> InsertMerchantId(HttpSession session,@RequestBody HashMap<String,Object> map){
+		if(orderServiceImpl.orderPayCheck((String)session.getAttribute("Userid"),(String)map.get("price"),
+				(String)map.get("coupon")) == 1) {  //결제할 돈의 액수를 클라이언트에서 수정한 경우 체크
+			return new ResponseEntity<String>("formupdated",HttpStatus.OK);
+		}
+		String Userid = (String)map.get("id");
+		String merchant_id = (String)map.get("merchant_id");
+		String phoneNumber = (String)map.get("phoneNumber");
+		String address = (String)map.get("address");
+		String buyer_name = (String)map.get("buyer_name");
+		String memo = (String)map.get("memo");
+		String price = (String)map.get("price");
+		orderServiceImpl.InsertMerchant(Userid,merchant_id,phoneNumber,address,buyer_name,memo,Integer.valueOf(price)); 
+		return new ResponseEntity<String>(merchant_id,HttpStatus.OK);
+	}
+	
+	@PostMapping("/unitInStockShortageCheck")	// 결제창을 누를때 만약 책의 개수가 부족한지 아닌지 확인
+	@ResponseBody
+	public boolean unitInStockShortageCheck(@RequestBody HashMap<String,Object> map) {
+		List<String> booknamelist = (ArrayList<String>)(map.get("booknamelist"));
+		List<Integer> bookqtylist = (ArrayList<Integer>)(map.get("bookqtylist"));
+		String merchant_id = (String)map.get("merchant_uid");
+		return orderServiceImpl.unitInStockCheck(booknamelist,bookqtylist,merchant_id); 
+	}
+	
 	@PostMapping("/completeToken")  // 결제 이후에 IMPORT서버로부터 온 결제 정보를 쇼핑몰 서버의 MySQL DB에 주문 정보를 동기화 과정
 	public ResponseEntity<JSONObject> synchronizationOrderTable(@RequestBody HashMap<String,Object> map,HttpSession session) throws Exception{
 		JSONObject json = new JSONObject();
@@ -298,7 +330,7 @@ public class PaymentAndRefundController {
 		json.put("imp_secret", imp_secret);
 		try {
 			String token = getToken(json,"https://api.iamport.kr/users/getToken");	// 아임포트 서버에 접근 권한 토큰 발급 요청
-			JSONObject getdata = null; //아임포트 서버에서 받아올 json 객체 null로 초기화
+			JSONObject getdata = null; // 아임포트 서버에서 받아올 json 객체 null로 초기화
 			JSONObject paymentjson = requestPaymentinfo(map,token,getdata,"https://api.iamport.kr/payments/" + (String)map.get("imp_uid"),session);
 			return new ResponseEntity<JSONObject>(paymentjson,HttpStatus.OK);
 		} catch(Exception e) {
@@ -309,7 +341,7 @@ public class PaymentAndRefundController {
 		}
 	}
 	
-	public static String getToken(JSONObject json, String requestURL) {
+	public static String getToken(JSONObject json, String requestURL) {		// 아임포트 서버로부터 토큰 받아오기
 		String _token = "";
 		try {
 			String requestString = "";
@@ -352,7 +384,7 @@ public class PaymentAndRefundController {
 	}
 	
 	private JSONObject requestPaymentinfo(HashMap<String,Object> map,String token,JSONObject getdata,String requestURL,
-			HttpSession session) {		// 결제 메소드
+			HttpSession session) {		// 결제 요청 메소드
 		try{
 			String requestString = "";
 			URL url = new URL(requestURL);

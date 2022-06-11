@@ -111,31 +111,6 @@ public class MallRestController {
 		return new ResponseEntity<JSONObject>(data,HttpStatus.OK);
 	}
 	
-	@PostMapping("/unitInStockShortageCheck")	// 결제창을 누를때 만약 책의 개수가 부족한지 아닌지 확인
-	public boolean unitInStockShortageCheck(@RequestBody HashMap<String,Object> map) {
-		List<String> booknamelist = (ArrayList<String>)(map.get("booknamelist"));
-		List<Integer> bookqtylist = (ArrayList<Integer>)(map.get("bookqtylist"));
-		String merchant_id = (String)map.get("merchant_uid");
-		return orderServiceImpl.unitInStockCheck(booknamelist,bookqtylist,merchant_id); 
-	}
-	
-	@PostMapping("/InsertMerchantId")	// 결제창을 눌렀을때 미리 DB에 주문에 대하여 DB 정보를 삽입함,주문 취소되면 삭제됨
-	public ResponseEntity<String> InsertMerchantId(HttpSession session,@RequestBody HashMap<String,Object> map){
-		if(orderServiceImpl.orderPayCheck((String)session.getAttribute("Userid"),(String)map.get("price"),
-				(String)map.get("coupon")) == 1) {  //결제할 돈의 액수를 클라이언트에서 수정한 경우 체크
-			return new ResponseEntity<String>("formupdated",HttpStatus.OK);
-		}
-		String Userid = (String)map.get("id");
-		String merchant_id = (String)map.get("merchant_id");
-		String phoneNumber = (String)map.get("phoneNumber");
-		String address = (String)map.get("address");
-		String buyer_name = (String)map.get("buyer_name");
-		String memo = (String)map.get("memo");
-		String price = (String)map.get("price");
-		orderServiceImpl.InsertMerchant(Userid,merchant_id,phoneNumber,address,buyer_name,memo,Integer.valueOf(price)); 
-		return new ResponseEntity<String>(merchant_id,HttpStatus.OK);
-	}
-	
 	@PostMapping("/deleteshoppingcart")		// 유저의 장바구니에서 특정 책만 삭제
 	public int deleteshoppingcart(int pnum) {
 		shoppingBasketImpl.deleteShoppingBasket(pnum);
