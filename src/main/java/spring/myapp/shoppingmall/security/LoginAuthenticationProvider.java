@@ -3,11 +3,15 @@ package spring.myapp.shoppingmall.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import spring.myapp.shoppingmall.service.UserDetailsImpl;
 import spring.myapp.shoppingmall.service.UserDetailsServiceImpl;
 
@@ -19,7 +23,7 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
     private BCryptPasswordEncoder passwordEncoder;
 	
 	@Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {	// authentication : 클라이언트측으로부터 받은 id,password 등의 유저 정보 객체
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         //입력한 ID, Password 조회
@@ -28,9 +32,15 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
 
         //UserDetailsService를 통해 DB에서 조회한 사용자
         UserDetailsImpl dbUser = (UserDetailsImpl)userDetailsService.loadUserByUsername(userId);
-        // 비밀번호 매칭되는지 확인
-        if(!passwordEncoder.matches(userPw, dbUser.getPassword()))
-        	throw new BadCredentialsException(dbUser.getUsername() + "Not Matched Password");
+        
+        if(dbUser == null)	// 계정 확인 불가
+        	throw new UsernameNotFoundException("DB User Not Found"); 	
+        else if(dbUser.getUser().getEmailconfirm() == 0)	// 계정 이메일 인증 안됨
+        	throw new LockedException("this User Locked Because of email auth");
+        else if(dbUser.getUser().getEnabled() == 0)			// 계정 잠금
+        	throw new DisabledException("this User Locked");
+        else if(!passwordEncoder.matches(userPw, dbUser.getPassword()))	// 비밀번호 불일치
+        	throw new BadCredentialsException(dbUser.getUsername() + "Not Matched Password");	
         
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new UsernamePasswordAuthenticationToken(dbUser, userPw, dbUser.getAuthorities());
