@@ -2,12 +2,16 @@ package spring.myapp.shoppingmall.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import spring.myapp.shoppingmall.dto.User;
 
 public class UserDetailsImpl implements UserDetails { 
-
+	
+	@Autowired
 	private User user;
 
 	public UserDetailsImpl(User user) {
@@ -55,5 +59,8 @@ public class UserDetailsImpl implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-
+	
+	public User getUser() {
+		return this.user;
+	}
 }
