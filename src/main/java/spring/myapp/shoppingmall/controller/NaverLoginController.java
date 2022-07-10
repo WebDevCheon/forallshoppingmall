@@ -9,9 +9,11 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
@@ -27,16 +29,18 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import spring.myapp.shoppingmall.dto.CustomUserDetails;
 import spring.myapp.shoppingmall.dto.User;
 import spring.myapp.shoppingmall.service.UserServiceImpl;
 
 @Controller
-public class NaverLoginController {
-	private final String  CLIENT_ID = "Ulrc1qEQrJH7h_kvtKrM";
-	private final String CLIENT_SECRET_ID = "4t8KT7jF_p";
+public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
+	private final String CLIENT_ID = "Ulrc1qEQrJH7h_kvtKrM";	// 네이버 API 발급 아이디
+	private final String CLIENT_SECRET_ID = "4t8KT7jF_p";		// 네이버 API 발급 Secret ID
 	private final String CALLBACK_URL = "https://localhost:8443/shoppingmall/naverlogincallback";	// 개발 버전
 	//private final String CALLBACK_URL = "https://www.forallshoppingmall.com/naverlogincallback";	// 배포 버전
 	private Logger logger = LoggerFactory.getLogger(NaverLoginController.class);
@@ -156,7 +160,7 @@ public class NaverLoginController {
 					userinfo.setPassword(null);		// 도서 쇼핑몰 서버에서 알아서 네이버 아이디 연동 로그인 같은 경우는 특별하게 지정
 					
 					// 스프링 시큐리티에 의해서 권한 승인
-					SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_USER");	// 유저 권한 승인
+					SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_USER");	// 유저 권한 승인(네이버 로그인 인증에 성공한 유저에게 줄 권한을 가진 객체)
 					List<SimpleGrantedAuthority> collection = new ArrayList<>();
 					collection.add(simpleGrantedAuthority);
 					CustomUserDetails customUserDetails = new CustomUserDetails(navernickname,null,collection);
@@ -164,9 +168,10 @@ public class NaverLoginController {
 				    		new UsernamePasswordAuthenticationToken(customUserDetails.getId(),null,customUserDetails.getAuthorities());
 				    SecurityContextHolder.getContext().setAuthentication(authentication);
 					
-					SavedRequest savedRequest = requestCache.getRequest(request, response);
-
-					if(savedRequest != null) { 		
+					SavedRequest savedRequest = requestCache.getRequest(request, response);	// 접근하려고 했던 Request
+					session.removeAttribute("state");		// session에 저장되어 있던 state값 해제
+					
+					if(savedRequest != null) { 
 			            String targetUrl = savedRequest.getRedirectUrl(); 
 			            redirectStratgy.sendRedirect(request, response, targetUrl); // 권한이 필요한 URL을 누르고 로그인 폼으로 이동 했다면,다시 그 URL로 Redirect
 			        } else			

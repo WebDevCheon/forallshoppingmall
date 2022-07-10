@@ -49,7 +49,7 @@ public class PaymentAndRefundController {
 	@Autowired
 	private AdminServiceImpl adminServiceImpl;
 	
-	@RequestMapping(value = "/iamport-webhook", method = RequestMethod.POST) // 고객이 무통장 입금으로 결제를 하거나,가상 계좌에 금액을 넣었을때 발생
+	@RequestMapping(value = "/iamport-webhook", method = RequestMethod.POST) // 고객이 무통장 입금으로 결제를 하거나,가상 계좌에 금액을 넣었을때 발생 -> 프로젝트에선 무통장 입금시만 처리
 	public void webhook(@RequestParam(required = false) String imp_uid,		 // 다른 결제 수단은 웹훅 사용 안함
 			@RequestParam(required = false) String merchant_uid, HttpServletRequest request,
 			HttpServletResponse response, @RequestParam(required = false) String status, Model model) {

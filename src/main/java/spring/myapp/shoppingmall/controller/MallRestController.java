@@ -31,7 +31,6 @@ import spring.myapp.shoppingmall.dto.User;
 import spring.myapp.shoppingmall.exception.UserNotFindExceptionHandler;
 import spring.myapp.shoppingmall.service.AwsServiceImpl;
 import spring.myapp.shoppingmall.service.CouponServiceImpl;
-import spring.myapp.shoppingmall.service.OrderServiceImpl;
 import spring.myapp.shoppingmall.service.ProductServiceImpl;
 import spring.myapp.shoppingmall.service.ReplyServiceImpl;
 import spring.myapp.shoppingmall.service.ShoppingBasketImpl;
@@ -51,9 +50,6 @@ public class MallRestController {
 	private ProductServiceImpl productServiceImpl; 
 	
 	@Autowired
-	private OrderServiceImpl orderServiceImpl;
-	
-	@Autowired
 	private AwsServiceImpl awsServiceImpl;
 	
 	@Autowired
@@ -70,7 +66,7 @@ public class MallRestController {
 	
 	@RequestMapping(value = "/shoppingbasket",method = RequestMethod.POST)	// 책의 아이디,책의 개수를 DB의 사용자 아이디의 장바구니에 Insert -> /cart와 차이는 JSON으로 데이터를 받느냐 안받느냐의 차이
 	public ResponseEntity<String> shoppingbasket(@RequestBody HashMap<String,Object> map,HttpSession session){	// 공부 해보기 위해서 /cart와 같은 기능을 작성
-		   String UserId = (String)(session.getAttribute("Userid"));
+		   String UserId = ((String)map.get("userid"));						//(String)(session.getAttribute("Userid"));
 		   int goods_id = Integer.valueOf((String)map.get("goods_id"));		// 책의 ID
 		   int price = Integer.valueOf((String)map.get("price"));			// 책의 가격
 		   int qty = Integer.valueOf((String)map.get("qty"));
@@ -87,15 +83,14 @@ public class MallRestController {
 		return new ResponseEntity<Integer>(cartspace,HttpStatus.OK);
 	}
 	
-	@PostMapping("/jeongbo")	// 주문창 페이지에서 주문 폼에 회원 정보로 입력폼을 작성하기 버튼을 눌렀을때 회원 정보를 조회하기 위해서 사용
+	@PostMapping("/jeongbo")	// 주문창 페이지에서 주문 form에 '회원 정보로 입력하기' 버튼을 눌렀을때 회원 정보를 조회하기 위해서 사용
 	public ResponseEntity<JSONObject> findUserInfoInOrder(@RequestBody HashMap<String,Object> map){
 		String Id = (String)(map.get("Id"));
 		logger.info("유저의 아이디 : {}",Id);
 		JSONObject data = new JSONObject();
 		User user = userServiceImpl.findUserById(Id);  //유저 객체 찾기
-		if(user == null) {
+		if(user == null)
 			throw new UserNotFindExceptionHandler(Id); // 유저가 없다면 에러 발생
-		}
 		data.put("name",user.getName());
 		data.put("address",user.getAddress());
 		data.put("phone",user.getPhoneNumber());
@@ -114,16 +109,15 @@ public class MallRestController {
 		shoppingBasketImpl.deleteAll(Id);
 	}
 	
-	@PostMapping(value = "/upload",produces = "text/plain;charset=utf-8")		// 파일 업로드 기능
+	@PostMapping(value = "/upload",produces = "text/plain;charset=utf-8")		// 파일 업로드 기능 -> 1.관리자가 책을 등록할때, 책의 이미지를 파일 업로드   2.사용자가 댓글을 달때,댓글에 이미지 업로드
 	public String upload(MultipartFile file,@RequestParam(required = false) Integer goods_id,
 			@RequestParam(required = false) Integer reviewimgflag) throws Exception {	   
-		String realFolder = null;
 		JSONObject json = new JSONObject();
 		UUID uuid = UUID.randomUUID();
 		String org_filename = file.getOriginalFilename();
 		String str_filename = uuid.toString() + org_filename;
 		if(goods_id != null) {   //책의 이미지인 경우
-			byte[] data = file.getBytes();
+			byte[] data = file.getBytes();		// 직렬화
 			FileOutputStream fos = new FileOutputStream("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\goodsimgUpload\\" +  str_filename); //개발자 PC 파일 시스템
 			//FileOutputStream fos = new FileOutputStream("/opt/tomcat/webapps/ROOT/upload/" +  str_filename);  // aws 파일 시스템
 			fos.write(data);
@@ -156,8 +150,8 @@ public class MallRestController {
 	
 	private File convertFromMultipartToFile(String filename,String whatupload) throws Exception {	// 파일 업로드 경로 지정
 		if(whatupload.equals("book")) {
-			File file = new File("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\goodsimgUpload\\" + filename);
-			//File file = new File("/opt/tomcat/webapps/ROOT/upload/" +  filename);
+			File file = new File("C:\\SpringShoppingmall\\workplace\\ShoppingApp\\src\\main\\webapp\\goodsimgUpload\\" + filename);		// 개발 데스크탑 경로
+			//File file = new File("/opt/tomcat/webapps/ROOT/upload/" +  filename);	AWS 리눅스 서버 경로
 			logger.info("File upload name -> {}",filename);
 			return file;
 		} else {

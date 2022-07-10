@@ -71,11 +71,9 @@ public class UserController
 			for(ObjectError error : errors) 
 				logger.info("{}",error.getDefaultMessage());
 			return "/join/joinform";
-		}
-		else if(userServiceImpl.checkAlreadyExistEmail(user.getEmail())) {
+		} else if(userServiceImpl.checkAlreadyExistEmail(user.getEmail())) {
 			return "/join/joinfailed";
-		}
-		else {
+		} else {
 			try {
 				joinbyemail(user.getEmail());  // 사용자가 회원가입 폼에 입력한 이메일로 회원가입 인증 번호를 발송
 				model.addAttribute("user",user);

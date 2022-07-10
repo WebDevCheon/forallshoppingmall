@@ -1,24 +1,13 @@
 package spring.myapp.shoppingmall.controller;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -47,25 +36,25 @@ public class MallController {
 	private static final Logger logger = LoggerFactory.getLogger(MallController.class);
 
 	@Autowired
-	private ShoppingBasketImpl shoppingBasketImpl;
+	private ShoppingBasketImpl shoppingBasketImpl;		// 장바구니 기능
 
 	@Autowired
-	private CouponServiceImpl couponServiceImpl;
+	private CouponServiceImpl couponServiceImpl;	// 쿠폰 기능
 
 	@Autowired
-	private ProductServiceImpl productServiceImpl;
+	private ProductServiceImpl productServiceImpl;	// 책의 정보 조회 기능
 
 	@Autowired
-	private OrderServiceImpl orderServiceImpl;
+	private OrderServiceImpl orderServiceImpl;	// 주문,결제 기능
 
 	@Autowired
-	private ReplyServiceImpl replyServiceImpl;
+	private ReplyServiceImpl replyServiceImpl;	// 책의 댓글 기능
 
 	@Autowired
-	private UserServiceImpl userServiceImpl;
+	private UserServiceImpl userServiceImpl;	// 유저의 정보 조회 기능
 
 	@Autowired
-	private Paging paging;
+	private Paging paging;	// 페이징 기능
 
 	@RequestMapping("/") // 홈페이지
 	public String home(HttpSession session, Model model, HttpServletResponse response,
@@ -98,7 +87,7 @@ public class MallController {
 	public String product(@RequestParam(value = "bookname", required = false) String bookname, // gId는 책의 이름
 			@RequestParam(value = "goods_id", required = false) String goods_id,
 			@RequestParam(value = "mode", required = false) String mode, Model model, HttpSession session,
-			HttpServletRequest request) {
+			HttpServletRequest request) {		// mode는 책의 댓글을 최신순으로 볼지 도움순으로 볼지 선택
 		model.addAttribute("good", productServiceImpl.getProductDetails(Integer.valueOf(goods_id)));
 		model.addAttribute("mode", mode);
 		if (mode.equals("'getreviewlatest'")) {
@@ -140,10 +129,6 @@ public class MallController {
 		model.addAttribute("list", shoppingbaskets);
 		model.addAttribute("User", user);
 		return "/order/shoppingbasketdesign";
-	}
-
-	private int getamount(String merchant_uid) {		// 주문 총액
-		return orderServiceImpl.getPriceByMerchantId(merchant_uid);
 	}
 
 	@RequestMapping("/OrderResult")		// 주문 결과 페이지
@@ -195,7 +180,7 @@ public class MallController {
 		return curPageNum;
 	}
 
-	@RequestMapping("/search")				// 책을 찾기 위한 URL
+	@RequestMapping("/search")				// 책을 검색
 	public String search(@RequestParam String subject, @RequestParam(value = "search", required = false) String search,
 			HttpServletRequest request, Model model) {
 		pagingModelKwd(subject, search, request, model);
@@ -204,7 +189,7 @@ public class MallController {
 		return "/menu/search";
 	}
 
-	@RequestMapping("/jusoPopup")
+	@RequestMapping("/jusoPopup")		// 주소 찾기 API
 	public String jusoPopup() {
 		return "jusoPopup";
 	}
@@ -240,7 +225,7 @@ public class MallController {
 		paging.pagingforKwd(curPageNum, model, subject, search);
 		return curPageNum;
 	}
-
+	
 	
 	
 	private Model pagingModelWithBook(Model model, HttpServletRequest request, String bigclass, String subclass) {	// 사용자가 대분류중에서 소분류에 해당하는 책 리스트를 DB에서 조회하여 모델을 반환
@@ -261,7 +246,7 @@ public class MallController {
 		paging.pagingforBook(curPageNum, model, bigclass, subclass);
 		return curPageNum;
 	}
-
+	
 	
 	
 	private Model pagingModelCoupon(Model model, HttpServletRequest request, String Id) { // 특정 사용자가 가지고 있는 쿠폰 리스트를 DB에서 조회하여 모델을 반환
