@@ -64,7 +64,7 @@ Forallshoppingmall BookStore
 > * 네이버 로그인 -> Naver Developers에서 발급해준 토큰값이 맞다면,CallBack URL Redirect(스프링 시큐리티 권한 승인) 
 
 ### 5. 회원가입
-> * 도로명 주소 API(https://www.juso.go.kr/addrlink/openApi/apiExprn.do)를 통한 주소 입력
+> * 도로명 주소 API( https://www.juso.go.kr/addrlink/openApi/apiExprn.do )를 통한 주소 입력
 > * 회원 가입시 가입 이메일 확인 메시지 발송 -> 메일에서 확인 버튼시에 회원 가입 완료(DB 속성 emailconfirm = 1, enabled = 1 updated)
 > * enabled = 1이 아니면, LoginAuthenticationProvider 클래스의 authenticate 메소드에 의해서 로그인 차단
 
