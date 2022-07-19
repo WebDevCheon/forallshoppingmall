@@ -50,7 +50,7 @@ Forallshoppingmall BookStore
 > * 주문 정보(Client) -> 아임포트 서버 -> PG 서버 -> 카드사 서버 (요청의 흐름)
 
 ### 2. REST
-> * AJAX Request -> ResponseEntity Response
+> * AJAX 비동기 요청 -> ResponseEntity 응답
 > * Development Tool : PostMan
 
 ### 3. 보안
@@ -63,10 +63,16 @@ Forallshoppingmall BookStore
 > * 네아로(Naver Login API) 적용
 > * 네이버 로그인 -> Naver Developers에서 발급해준 토큰값이 맞다면,CallBack URL Redirect(스프링 시큐리티 권한 승인) 
 
-### 5. 배포 환경
+### 5. 회원가입
+> * 도로명 주소 API(https://www.juso.go.kr/addrlink/openApi/apiExprn.do)를 통한 주소 입력
+> * 회원 가입시 가입 이메일 확인 메시지 발송 -> 메일에서 확인 버튼시에 회원 가입 완료(DB 속성 emailconfirm = 1, enabled = 1 updated)
+> * enabled = 1이 아니면, LoginAuthenticationProvider 클래스의 authenticate 메소드에 의해서 로그인 차단
+
+### 6. 배포 환경
 > * AWS EC2(Tomcat 설치)
 > * 도서의 이미지 파일은 S3 FileSystem 업로드 / 저장
 > * LoadBalancer 적용(확인 방법 : chrome dev tool에서 접속 IP 확인)
+
 
 ## DB 설계
 <img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/forallshoppingmall+%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4.PNG" width = "60%">
