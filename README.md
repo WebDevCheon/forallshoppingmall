@@ -68,7 +68,19 @@ Forallshoppingmall BookStore
 > * 회원 가입시 가입 이메일 확인 메시지 발송 -> 메일에서 확인 버튼시에 회원 가입 완료(DB 속성 emailconfirm = 1, enabled = 1 updated)
 > * enabled = 1이 아니면, LoginAuthenticationProvider 클래스의 authenticate 메소드에 의해서 로그인 차단
 
-### 6. 배포 환경
+### 6. 파일 업로드
+> * AWS S3 파일 업로드 기능
+> * 도서 리뷰 댓글 / 관리자 도서 등록에 사진 파일 업로드 기능
+> * AwsServiceImpl 클래스 생성자에서 amazonS3 객체 생성
+
+### 7. 페이징
+> * 한 블럭당 존재할 수 있는 페이지 수 지정( pageCount : 사이트 블럭당 페이지 수, adminpageCount : 관리자 페이지 블럭당 페이지 수)
+
+### 8. 로깅
+> * 로깅을 통한 데이터 / 기록 저장( ex. 특정 사용자의 주문 , 버그 or 에러)
+> * RollingFileAppender를 통한 하루동안의 로깅 정보 로컬에 저장
+
+### 9. 배포 환경
 > * AWS EC2(Tomcat 설치)
 > * 도서의 이미지 파일은 S3 FileSystem 업로드 / 저장
 > * LoadBalancer 적용(확인 방법 : chrome dev tool에서 접속 IP 확인)
