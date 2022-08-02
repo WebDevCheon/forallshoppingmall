@@ -1,5 +1,7 @@
 package spring.myapp.shoppingmall.test;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -7,10 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,7 +28,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
+import spring.myapp.shoppingmall.service.ShoppingBasketImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml",
@@ -43,44 +47,36 @@ public class AppControllerTest {
 	private WebApplicationContext wac;
 	private MockMvc mock;
 	
+	@Mock
+	private ShoppingBasketImpl shoppingBasketImpl;
+	
 	@Before
-	public void start() {
+	public void initMock() {
 		MockitoAnnotations.initMocks(this);
 		mock = MockMvcBuilders.webAppContextSetup(wac).build();
-		logger.info("Test Start...................");
 	}
 
-	@After
-	public void end() {
-		logger.info("Test End...................");
-	}
-	
 	@Ignore
+	@DisplayName("join 테스트")
 	@Transactional
-	public void joinTest() {
-		try {
-			logger.info("==================== join Method Start ====================");
-			mock.perform(post("/join")
-					.param("id","testAdmin")
-					.param("password","123456")
-					.param("name","adminTest")
-					.param("address","testAddress")
-					.param("sex","M")
-					.param("age","20")
-					.param("phoneNumber","01012345678")
-					.param("email","test@naver.com"))
-	                .andDo(print())
-	                .andExpect(status().isOk());
-			logger.info("==================== join Method End ====================");
-		} catch (Exception e) {
-			logger.info("join Method Error : " + e);
-		}
+	public void joinTest() throws Exception {		// 회원가입 테스트
+		mock.perform(post("/join")
+				.param("id","testAdmin")
+				.param("password","123456")
+				.param("name","adminTest")
+				.param("address","testAddress")
+				.param("sex","M")
+				.param("age","20")
+				.param("phoneNumber","01012345678")
+				.param("email","test@naver.com"))
+	            .andDo(print())
+	            .andExpect(status().isOk());
 	}
 	
 	@Test
+	@DisplayName("shoppingbasket 테스트")
 	@Transactional
-	public void shoppingbasketTest() throws Exception {
-		logger.info("==================== shoppingbasket Method Start ====================");
+	public void shoppingbasketTest() throws Exception {		// 장바구니에 넣기 테스트
 		Map<String, Object> jsonObj = new HashMap<String,Object>();
 		jsonObj.put("goods_id","34");
 		jsonObj.put("price","100");
@@ -88,15 +84,18 @@ public class AppControllerTest {
 		jsonObj.put("qty","5");
 		jsonObj.put("userid","admin");
 		jsonObj.put("thumbnail","https://localhost:8443/shoppingmall/...");
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = mapper.writeValueAsString(jsonObj);
+		Gson gson = new Gson();
+		String jsonString = gson.toJson(jsonObj);
+		
+		doNothing().when(shoppingBasketImpl).setShoppingBasket(5, 34, 100, "admin", "후가는 유가");
 		
 		mock.perform(post("/shoppingbasket")
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(jsonString))
 					.andDo(print())
-					.andExpect(status().isOk());
-		logger.info("==================== shoppingbasket Method End ====================");
+					.andExpect(status().isCreated());
+		shoppingBasketImpl.setShoppingBasket(5, 34, 100, "admin", "후가는 유가");
+		verify(shoppingBasketImpl).setShoppingBasket(5, 34, 100, "admin", "후가는 유가");
 	}
 	
 }
