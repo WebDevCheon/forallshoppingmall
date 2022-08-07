@@ -10,9 +10,10 @@ Forallshoppingmall BookStore
 <img src="https://img.shields.io/badge/CSS-1572B6?style=flat-square&logo=CSS3&logoColor=white"/></a> &nbsp
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/></a> &nbsp
 <img src="https://img.shields.io/badge/Java-00599C?style=flat-square&logo=Java&logoColor=white"/></a> &nbsp 
+<img src="https://img.shields.io/badge/Spring-339933?style=flat-square&logo=Spring&logoColor=white"/></a> &nbsp
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/></a> &nbsp
 <img src="https://img.shields.io/badge/JSP-4479A1?style=flat-square&logo=JSP&logoColor=white"/></a> &nbsp 
-<img src="https://img.shields.io/badge/Spring-339933?style=flat-square&logo=Spring&logoColor=white"/></a> &nbsp
+<img src="https://img.shields.io/badge/Junit-D46434?style=flat-square&logo=Junit&logoColor=white"/></a> &nbsp
 <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat-square&logo=Amazon%20AWS&logoColor=white"/></a> &nbsp 
 </p>
 
@@ -41,7 +42,7 @@ Forallshoppingmall BookStore
 
 ## 프로젝트 기능
 
-### 1. 결제
+#### 1. 결제
 <img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%95%84%EC%9E%84%ED%8F%AC%ED%8A%B8%EC%84%9C%EB%B2%84.png" width = "60%">
 <br>
 
@@ -49,42 +50,52 @@ Forallshoppingmall BookStore
 > * 아임포트 서버 API 연동
 > * 주문 정보(Client) -> 아임포트 서버 -> PG 서버 -> 카드사 서버 (요청의 흐름)
 
-### 2. REST
+#### 2. REST
 > * AJAX 비동기 요청 -> ResponseEntity 응답
 > * Development Tool : PostMan
 
-### 3. 보안
+#### 3. 보안
 > * Spring Security FrameWork 적용
 > * 권한 : 유저(ROLE_USER in MySQL) / 관리자(ROLE_ADMIN in MySQL)
 > * CSRF ATTACK 방어
 > * AWS의 HTTPS ssl 인증서 적용
 
-### 4.네이버 로그인 연동
+#### 4.네이버 로그인 연동
 > * 네아로(Naver Login API) 적용
 > * 네이버 로그인 -> Naver Developers에서 발급해준 토큰값이 맞다면,CallBack URL Redirect(스프링 시큐리티 권한 승인) 
 
-### 5. 회원가입
+#### 5. 회원가입
 > * 도로명 주소 API( https://www.juso.go.kr/addrlink/openApi/apiExprn.do )를 통한 주소 입력
 > * 회원 가입시 가입 이메일 확인 메시지 발송 -> 메일에서 확인 버튼시에 회원 가입 완료(DB 속성 emailconfirm = 1, enabled = 1 updated)
 > * enabled = 1이 아니면, LoginAuthenticationProvider 클래스의 authenticate 메소드에 의해서 로그인 차단
 
-### 6. 파일 업로드
+#### 6. 파일 업로드
 > * AWS S3 파일 업로드 기능
 > * 도서 리뷰 댓글 / 관리자 도서 등록에 사진 파일 업로드 기능
 > * AwsServiceImpl 클래스 생성자에서 amazonS3 객체 생성
 
-### 7. 페이징
+#### 7. 페이징
 > * 한 블럭당 존재할 수 있는 페이지 수 지정( pageCount : 사이트 블럭당 페이지 수, adminpageCount : 관리자 페이지 블럭당 페이지 수)
 
-### 8. 로깅
+#### 8. 로깅
 > * 로깅을 통한 데이터 / 기록 저장( ex. 특정 사용자의 주문 , 버그 or 에러)
 > * RollingFileAppender를 통한 하루동안의 로깅 정보 로컬에 저장
 
-### 9. 배포 환경
+#### 10. JavaMailSender
+> * 회원가입시 메일 인증을 위하여 JavaMailSender Class 이용(빈을 설정하여 IOC Container를 통하여 DI)
+
+#### 11. 배포 환경
 > * AWS EC2(Tomcat 설치)
 > * 도서의 이미지 파일은 S3 FileSystem 업로드 / 저장
 > * LoadBalancer 적용(확인 방법 : chrome dev tool에서 접속 IP 확인)
 
+
+## 테스트
+>* jUnit을 통하여 테스트 코드 작성
+>* Mockito를 이용하여 Controller,Service에서 하위 Mock 객체를 만들어준 이후 @InjectMocks로 Mock객체 DI를 하여 테스트 진행
+>* Controller에선 MockMvc 객체를 생성하여 진행
+>* Controller,Service,Dao를 각각 나눠서 3개의 클래스로 나눠서 테스트 진행
+>* 테스트를 통한 코드 리팩토링 작업
 
 ## DB 설계
 <img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/forallshoppingmall+%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4.PNG" width = "60%">
