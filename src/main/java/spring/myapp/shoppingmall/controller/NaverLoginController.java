@@ -48,6 +48,8 @@ public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
 	private RedirectStrategy redirectStratgy = new DefaultRedirectStrategy();
 	private String defaultUrl = "https://localhost:8443/shoppingmall/";			// 개발 버전
 	//private final String defaultUrl = "https://www.forallshoppingmall.com/";	// 배포 버전
+	private final String mockNaverTokenURL = "https://96729ffb-0d4a-4a77-b9e2-c403aaa2cab1.mock.pstmn.io/naverTestToken";		// POSTMAN mock server 네이버 토큰 발급 url
+	private final String mockNaverProfileURL = "https://96729ffb-0d4a-4a77-b9e2-c403aaa2cab1.mock.pstmn.io/naverTestProfile";	// POSTMAN mock server 네이버 프로필 조회 url
 	
 	@Autowired
 	private UserServiceImpl userserviceimpl;
@@ -67,8 +69,9 @@ public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
 	}
 	
 	@RequestMapping("/naverlogincallback")	// 네이버 로그인과 정보 제공 동의 과정이 완료되면 CallBack URL(도서 쇼핑몰 Server)로 code값과 state 값이 URL 문자열로 전송
-	public String naverlogincallback(@RequestParam String state,@RequestParam String code,@RequestParam(required = false) String error,
-			@RequestParam(required = false) String error_description,HttpSession session,HttpServletRequest request,HttpServletResponse response) {
+	public String naverlogincallback(@RequestParam(required = false) String state,@RequestParam String code,@RequestParam(required = false) String error,
+			@RequestParam(required = false) String error_description,HttpSession session,HttpServletRequest request,HttpServletResponse response,
+			@RequestParam(required = false) boolean isTesting) {
 		if(error != null) {
 			logger.info("Naver Login Callback Error : {}",error_description);
 			return "home";
@@ -78,20 +81,35 @@ public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
 			logger.info("토큰 인증 에러 발생 , Request : {}",request);
 			return "home";
 		} else {
-			try {
-				String tokenurl = "https://nid.naver.com/oauth2.0/token?client_id=" + CLIENT_ID + "&client_secret=" 
+			String tokenurl = null;
+			String getprofileurl = null;
+			
+			if(isTesting) {			// POSTMAN mock server URL로 설정
+				tokenurl = mockNaverTokenURL;
+				getprofileurl = mockNaverProfileURL;
+			} else {
+				tokenurl = "https://nid.naver.com/oauth2.0/token?client_id=" + CLIENT_ID + "&client_secret=" 
 						+ CLIENT_SECRET_ID + "&grant_type=authorization_code&state=" + (String)session.getAttribute("state") + 
 						"&code=" + code;	// Callback으로 전달받은 정보를 이용하여 인증 이후에 접근 토큰을 발급 요청할 URL,접근 토큰은 사용자가 인증을 완료했다는 것을 보장할 수 있는 인증 정보
+				getprofileurl = "https://openapi.naver.com/v1/nid/me";	// 접근 토큰을 이용하여 프로필 정보 조회 API를 호출
+			}
+			
+			logger.info("tokenurl = " + tokenurl);
+			logger.info("getprofileurl = " + getprofileurl);
+			
+			try {
+				/*String tokenurl = "https://nid.naver.com/oauth2.0/token?client_id=" + CLIENT_ID + "&client_secret=" 
+						+ CLIENT_SECRET_ID + "&grant_type=authorization_code&state=" + (String)session.getAttribute("state") + 
+						"&code=" + code;	 
+				*/
 				URL url = new URL(tokenurl);
 				HttpURLConnection con = (HttpURLConnection)url.openConnection();
-				con.setDoOutput(true); 				
-				con.setInstanceFollowRedirects(false);  
 				con.setRequestMethod("GET");
-				con.setRequestProperty("Accept-Charset","UTF-8");
-				con.setRequestProperty("Content-Type","text/plain;charset=utf-8");
-				OutputStream os = con.getOutputStream();
+				con.setRequestProperty("User-Agent", "Mozilla/5.0");
+		        con.setRequestProperty("Accept", "application/json");
+		        con.setDoInput(true);
 				con.connect();
-				StringBuilder sb = new StringBuilder(); 
+				StringBuilder sb = new StringBuilder();
 				String requestString = null;
 				if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
 					BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
@@ -102,7 +120,6 @@ public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
 					br.close();
 					requestString = sb.toString();
 				}
-				os.flush();
 				con.disconnect();
 				JSONParser jsonParser = new JSONParser();
 				JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
@@ -112,14 +129,13 @@ public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
 				access_token = (String)jsonObj.get("access_token");
 				token_type = (String)jsonObj.get("token_type");
 				try {
-					String getprofileurl = "https://openapi.naver.com/v1/nid/me";	// 접근 토큰을 이용하여 프로필 정보 조회 API를 호출
+					//String getprofileurl = "https://openapi.naver.com/v1/nid/me";	// 접근 토큰을 이용하여 프로필 정보 조회 API를 호출
 					url = new URL(getprofileurl);					
 					HttpURLConnection GetProfileConnection = (HttpURLConnection)url.openConnection();
 					GetProfileConnection.setDoOutput(true); 				
 					GetProfileConnection.setInstanceFollowRedirects(false);  
 					GetProfileConnection.setRequestMethod("GET");
 					GetProfileConnection.setRequestProperty("Authorization",token_type + " " + access_token);
-					os = GetProfileConnection.getOutputStream();
 					GetProfileConnection.connect();
 					sb = new StringBuilder(); 
 					if (GetProfileConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -131,7 +147,6 @@ public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
 						br.close();
 						requestString = sb.toString();
 					}
-					os.flush();
 					GetProfileConnection.disconnect();
 					jsonObj = (JSONObject) jsonParser.parse(requestString);
 					logger.info("네이버 프로필 정보 조회 결과 : {}",jsonObj);
@@ -158,7 +173,6 @@ public class NaverLoginController {		// 네이버 로그인 요청 기능 Controller
 					userinfo.setAuthorities("ROLE_USER");
 					userinfo.setEnabled(1);
 					userinfo.setPassword(null);		// 도서 쇼핑몰 서버에서 알아서 네이버 아이디 연동 로그인 같은 경우는 특별하게 지정
-					
 					// 스프링 시큐리티에 의해서 권한 승인
 					SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_USER");	// 유저 권한 승인(네이버 로그인 인증에 성공한 유저에게 줄 권한을 가진 객체)
 					List<SimpleGrantedAuthority> collection = new ArrayList<>();
