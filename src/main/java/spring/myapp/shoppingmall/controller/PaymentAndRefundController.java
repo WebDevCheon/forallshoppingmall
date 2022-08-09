@@ -3,6 +3,7 @@ package spring.myapp.shoppingmall.controller;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -82,7 +83,6 @@ public class PaymentAndRefundController {
 					connection.setInstanceFollowRedirects(false);
 					connection.setRequestMethod("GET");
 					connection.setRequestProperty("Authorization", token);
-					OutputStream os = connection.getOutputStream();
 					connection.connect();
 					StringBuilder sb = new StringBuilder();
 					if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -95,7 +95,6 @@ public class PaymentAndRefundController {
 						br.close();
 						requestString = sb.toString();
 					}
-					os.flush();
 					connection.disconnect();
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
@@ -165,7 +164,6 @@ public class PaymentAndRefundController {
 				connection.setInstanceFollowRedirects(false);
 				connection.setRequestMethod("POST");
 				connection.setRequestProperty("Authorization", token);
-				OutputStream os = connection.getOutputStream();
 				connection.connect();
 				StringBuilder sb = new StringBuilder();
 				if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -177,7 +175,6 @@ public class PaymentAndRefundController {
 					br.close();
 					requestString = sb.toString();
 				}
-				os.flush();
 				connection.disconnect();
 				JSONParser jsonParser = new JSONParser();
 				JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
@@ -326,12 +323,16 @@ public class PaymentAndRefundController {
 		JSONObject json = new JSONObject();
 		String imp_key = URLEncoder.encode("2645427372556228", "UTF-8");
 		String imp_secret =	URLEncoder.encode("75USkRpzuQ8T8WeQcJrO1GFKEERYRDAYIuR2lgCQ6LKfHY5THxIJenuS2mRTZsSHWJKiZm967TlPRrJz", "UTF-8");
+		String getTokenURL = (String)map.get("getTokenURL");
+		String getPayResultURL = (String)map.get("getPayResultURL");
 		json.put("imp_key",imp_key);
 		json.put("imp_secret", imp_secret);
 		try {
-			String token = getToken(json,"https://api.iamport.kr/users/getToken");	// 아임포트 서버에 접근 권한 토큰 발급 요청
+			String token = getToken(json,getTokenURL);
 			JSONObject getdata = null; // 아임포트 서버에서 받아올 json 객체 null로 초기화
-			JSONObject paymentjson = requestPaymentinfo(map,token,getdata,"https://api.iamport.kr/payments/" + (String)map.get("imp_uid"),session);
+			JSONObject paymentjson = requestPaymentinfo(map,token,getdata,getPayResultURL + (String)map.get("imp_uid"),session);		// 결제가 적절하게 된 것인지 import 서버에 결제 정보를 요청
+			if(paymentjson == null)
+				return new ResponseEntity<JSONObject>(HttpStatus.BAD_REQUEST);
 			return new ResponseEntity<JSONObject>(paymentjson,HttpStatus.OK);
 		} catch(Exception e) {
 			logger.info("에러 발생 In synchronizationOrderTable Method -> " + e,e);
@@ -348,12 +349,14 @@ public class PaymentAndRefundController {
 			URL url = new URL(requestURL);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
+			connection.setDoInput(true);
 			connection.setInstanceFollowRedirects(false);
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
+			connection.connect();
 			OutputStream os = connection.getOutputStream();
 			os.write(json.toString().getBytes());
-			connection.connect();
+			os.flush();
 			StringBuilder sb = new StringBuilder();
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
@@ -364,7 +367,6 @@ public class PaymentAndRefundController {
 				br.close();
 				requestString = sb.toString();
 			}
-			os.flush();
 			connection.disconnect();
 			try {
 				JSONParser jsonParser = new JSONParser();
@@ -390,10 +392,10 @@ public class PaymentAndRefundController {
 			URL url = new URL(requestURL);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true); 				
+			connection.setDoInput(true);
 			connection.setInstanceFollowRedirects(false);  
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Authorization", token);
-			OutputStream os= connection.getOutputStream();
 			connection.connect();
 			StringBuilder sb = new StringBuilder(); 
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -405,7 +407,6 @@ public class PaymentAndRefundController {
 				br.close();
 				requestString = sb.toString();
 			}
-			os.flush();
 			connection.disconnect();
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonObj = (JSONObject) jsonParser.parse(requestString);
@@ -493,7 +494,6 @@ public class PaymentAndRefundController {
 				order.setCouponid(couponid);
 				
 				int paidcheck = orderServiceImpl.updateStatusAndOrder(order,list,bookqtylist);
-				
 				if(paidcheck == 1) {
 					resjson.put("check","success");
 					resjson.put("data",getdata);
@@ -572,9 +572,10 @@ public class PaymentAndRefundController {
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
 			connection.setRequestProperty("Authorization", token);
+			connection.connect();
 			OutputStream os= connection.getOutputStream();
 			os.write(obj.toString().getBytes());
-			connection.connect();
+			os.flush();
 			StringBuilder sb = new StringBuilder(); 
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
@@ -585,7 +586,6 @@ public class PaymentAndRefundController {
 				br.close();
 				requestString = sb.toString();
 			}
-			os.flush();
 			connection.disconnect();
 			try {
 				JSONParser jsonParser = new JSONParser();
