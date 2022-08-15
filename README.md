@@ -17,8 +17,8 @@ Forallshoppingmall BookStore
 <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat-square&logo=Amazon%20AWS&logoColor=white"/></a> &nbsp 
 </p>
 
-## 클래스 다이어그램 / 시스템 구조
-> <img src = "https://user-images.githubusercontent.com/57096651/170808906-685e996c-5296-49d8-9df5-8570ade0329d.PNG" width = "80%">
+## 시스템 구조
+> <img src = "https://user-images.githubusercontent.com/57096651/184578088-4d538985-1155-4b72-ae99-3f3080f1495c.PNG" width = "80%">
 
 ## 동영상 시연
 > * SpringSecurity에 의해 Request Filtering -> LoginForm
