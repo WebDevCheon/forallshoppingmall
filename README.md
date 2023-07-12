@@ -43,7 +43,7 @@ Forallshoppingmall BookStore
 ## 프로젝트 기능
 
 #### 1. 결제
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%95%84%EC%9E%84%ED%8F%AC%ED%8A%B8%EC%84%9C%EB%B2%84.png" width = "60%">
+<img src = "https://github.com/WebDevCheon/forallshoppingmall/assets/57096651/04b3fed7-dacb-4efc-9925-abe240608c8c" width = "60%">
 <br>
 
 > * 휴대폰 결제 / 카드 결제 / 무통장 입금 / 실시간 이체
@@ -98,137 +98,7 @@ Forallshoppingmall BookStore
 >* 테스트를 통한 코드 리팩토링 작업
 
 ## DB 설계
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/forallshoppingmall+%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4.PNG" width = "60%">
-
-
-
-## AWS 배포 사진
-### PC
-
-<h4>홈페이지</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(6).png" width = "800" height = "400">
-<br>
-
-<h4>홈페이지 목록</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(7).png" width = "800" height = "400">
-<br>
-
-<h4>상품탭</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(8).png" width = "800" height = "400">
-<br>
-
-<h4>책 목록</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(12).png" width = "800" height = "400">
-
-<h4>책 상세보기1</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(13).png" width = "800" height = "400">
-
-<h4>책 상세보기2</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(14).png" width = "800" height = "400">
-
-<h4>리뷰</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(15).png" width = "800" height = "400">
-
-<h4>장바구니</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(16).png" width = "800" height = "400">
-
-<h4>KG 이니시스 결제창</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(17).png" width = "800" height = "400">
-
-<h4>결제 메일</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(29).png" width = "800" height = "400">
-
-<h4>결제 정보1</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(25).png" width = "800" height = "400">
-
-<h4>결제 정보2</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(20).png" width = "800" height = "400">
-
-<h4>환불 페이지(관리자 권한)</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(21).png" width = "800" height = "400">
-
-<h4>책 등록(관리자 권한)</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(22).png" width = "800" height = "400">
-
-<h4>로그인 창</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(24).png" width = "800" height = "400">
-
-<h4>주문 테이블</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(27).png" width = "800" height = "400">
-
-<h4>주문책 테이블</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7(28).png" width = "800" height = "400">
-
-
-### Mobile
-
-<h4>홈페이지</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-01-08.png" width = "400" height = "600">
-<br>
-
-<h4>로그인</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-01-35.png" width = "400" height = "600">
-<br>
-
-<h4>로그인 이후</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-01-54.png" width = "400" height = "600">
-<br>
-
-<h4>상품탭</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-02-29.png" width = "400" height = "600">
-<br>
-
-<h4>책 목록</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-03-07.png" width = "400" height = "600">
-<br>
-
-<h4>책 상세보기(1)</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-04-03.png" width = "400" height = "600">
-<br>
-
-<h4>책 상세보기(2)</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-03-55.png" width = "400" height = "600">
-<br>
-
-<h4>리뷰 댓글</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-16-37.png" width = "400" height = "600">
-<br>
-
-<h4>리뷰 작성</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-17-37.png" width = "400" height = "600">
-<br>
-
-<h4>장바구니</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-25-34.png" width = "400" height = "600">
-<br>
-
-<h4>결제창</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-27-35.png" width = "400" height = "600">
-<br>
-
-<h4>주문 정보</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-28-16.png" width = "400" height = "600">
-<br>
-
-<h4>고객 환불</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-29-11.png" width = "400" height = "600">
-<br>
-
-<h4>책 등록</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-29-26.png" width = "400" height = "600">
-<br>
-
-<h4>이달의 책 등록</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-29-38.png" width = "400" height = "600">
-<br>
-
-<h4>오늘의 책 등록</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-29-48.png" width = "400" height = "600">
-<br>
-
-<h4>책 검색</h4>
-<img src = "https://shoppingmallbucket.s3.ap-northeast-2.amazonaws.com/githubimage/mobile/Capture%2B_2020-07-03-17-30-07.png" width = "400" height = "600">
-<br>
+<img src = "https://github.com/WebDevCheon/forallshoppingmall/assets/57096651/ba49ed2e-458a-4864-8d41-06545ed9ab5a" width = "60%">
 
 <hr>
 
